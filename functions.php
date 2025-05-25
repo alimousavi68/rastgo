@@ -20,6 +20,10 @@ require_once(get_template_directory() . '/inc/widget/i8_show_posts_two_col.php')
 require_once(get_template_directory() . '/inc/widget/i8_site_info_box.php');
 require_once(get_template_directory() . '/inc/widget/i8_market_data.php');
 require_once(get_template_directory() . '/inc/widget/i8_menu.php');
+require_once get_template_directory() . '/inc/widget/i8-latestpost-thumbnail/init.php';
+require_once get_template_directory() . '/inc/widget/i8-latestpost-overlay/index.php';
+
+
 
 
 /**
@@ -38,6 +42,7 @@ require_once(get_template_directory() . '/inc/functions/theme-options/theme_cust
 require_once(get_template_directory() . '/inc/functions/theme-options/theme_footer.php');
 require_once(get_template_directory() . '/inc/functions/theme-options/theme_search.php');
 require_once(get_template_directory() . '/inc/functions/theme-options/theme_social_links.php');
+require_once(get_template_directory() . '/inc/functions/theme-options/contact_menu.php');
 
 
 /**

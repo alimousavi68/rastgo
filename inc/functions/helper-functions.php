@@ -394,17 +394,14 @@ function build_custom_menu($items, $parent_id = 0)
             $submenu = get_submenu_items($items, $item->ID);
             if (!empty($submenu)) {
                 // اگر ساب منو داشت
-                $menu .= '<li class="nav-item dropdown">';
-                $menu .= '<a class="nav-link hasht-dropdown-toggle " id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" href="' . esc_url($item->url) . '">' . esc_html($item->title) . '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down mx-1" viewBox="0 0 16 16">
+
+                $menu .= '<a class="footer-nav-link position-relative" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" href="' . esc_url($item->url) . '">' . esc_html($item->title) . '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down mx-1" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
               </svg>' . '</a>';
-                $menu .= '<ul class="dropdown-menu submenu py-2" aria-labelledby="navbarDropdown">';
                 $menu .= build_custom_menu($submenu, $item->ID); // فراخوانی بازگشایی
-                $menu .= '</ul>';
             } else {
                 //اگر ساب منو نداشت
-                $menu .= '<li class="nav-item">';
-                $menu .= '<a class="nav-link ';
+                $menu .= '<a class="footer-nav-link position-relative ';
 
                 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";
                 $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -413,7 +410,6 @@ function build_custom_menu($items, $parent_id = 0)
                 }
                 $menu .= '" href="' . esc_url($item->url) . '">' . esc_html($item->title) . '</a>';
             }
-            $menu .= '</li>';
         }
     }
 
@@ -483,9 +479,9 @@ function build_custom_menu_by_id($menu_id, $style_type = 'row')
     if ($menu_items) {
         $type_class = ($style_type == 'column') ? 'flex-column menu-fix' : 'flex-row';
         $gap = ($style_type == 'column') ? 'column-gap-0' : 'column-gap-3';
-        echo '<ul class="navbar-nav mb-lg-0 menu-list d-flex ' . $type_class . ' g-2  px-0 flex-wrap ' . $gap . ' ">';
+        echo '<div class="d-flex flex-column align-items-center align-items-md-start ">';
         echo build_custom_menu($menu_items);
-        echo '</ul>';
+        echo '</div>';
     }
 }
 
@@ -1293,3 +1289,400 @@ function insert_related_post_link_in_content($content)
     return $content;
 }
 add_filter('the_content', 'insert_related_post_link_in_content');
+
+
+
+// factiran functions
+function render_custom_breadcrumb_menu($theme_location) {
+    if (($locations = get_nav_menu_locations()) && isset($locations[$theme_location])) {
+        $menu = wp_get_nav_menu_object($locations[$theme_location]);
+        $menu_items = wp_get_nav_menu_items($menu->term_id);
+
+        if (!$menu_items) return;
+
+        // مرتب‌سازی بر اساس ترتیب
+        usort($menu_items, function($a, $b) {
+            return $a->menu_order - $b->menu_order;
+        });
+
+        $parents = [];
+        $children = [];
+
+        // جداسازی آیتم‌های والد و فرزند
+        foreach ($menu_items as $item) {
+            if ($item->menu_item_parent == 0) {
+                $parents[$item->ID] = $item;
+            } else {
+                $children[$item->menu_item_parent][] = $item;
+            }
+        }
+
+        // تولید لیست breadcrumb اصلی
+        echo '<ul class="breadcrumb-list p-0 m-0 d-flex align-items-center justify-content-start flex-wrap mb-3">';
+        $index = 1;
+        foreach ($parents as $parent_id => $parent_item) {
+            $is_active = ($index === 1) ? 'breadcrumb-list-active' : '';
+            echo '<li class="breadcrumb-list-item p-0 m-0 list-unstyled ' . $is_active . '" breadcrumb="breadcrumb' . $index . '">';
+            echo '<a href="javascript:;" class="breadcrumb-list-link d-flex align-items-center justify-content-center">';
+            echo esc_html($parent_item->title);
+            echo '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" class="svg-icon">
+                    <path d="M9 10.5848L8.409 11.25L3 6L8.409 0.75L9 1.41525L4.2765 6L9 10.5848Z" fill="currentColor"/>
+                  </svg>';
+            echo '</a>';
+            echo '</li>';
+            $index++;
+        }
+        echo '</ul>';
+
+        // تولید جعبه زیرمنوها
+        $index = 1;
+        foreach ($parents as $parent_id => $parent_item) {
+            $is_active = ($index === 1) ? 'breadcrumb-boxs-active" style="display:block' : '';
+            echo '<div class="breadcrumb-boxs ' . $is_active . '" id="breadcrumb' . $index . '">';
+            echo '<div class="breadcrumb-boxs-list d-flex align-items-center justify-content-start flex-wrap">';
+            if (isset($children[$parent_id])) {
+                foreach ($children[$parent_id] as $child) {
+                    echo '<a href="' . esc_url($child->url) . '" class="breadcrumb-box">';
+                    echo esc_html($child->title);
+                    echo '</a>';
+                }
+            }
+            echo '</div>';
+            echo '</div>';
+            $index++;
+        }
+    }
+}
+
+
+function load_jquery_for_breadcrumb() {
+    wp_enqueue_script('jquery'); // اطمینان از لود شدن jQuery
+}
+add_action('wp_enqueue_scripts', 'load_jquery_for_breadcrumb');
+
+class Custom_Sidebar_Menu_Walker extends Walker_Nav_Menu {
+    // ما فقط سطح اول را می‌خواهیم
+    function start_lvl(&$output, $depth = 0, $args = null) {}
+    function end_lvl(&$output, $depth = 0, $args = null) {}
+
+    function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
+        // فقط آیتم‌های عمق 0
+        if ($depth !== 0) {
+            return;
+        }
+
+        // **۱️. اجازه بده افزونه‌ها $args را دستکاری کنند**
+        $args = apply_filters('nav_menu_item_args', $args, $item, $depth);
+
+        // **۲️. کلاس‌ها**
+        $classes = array_filter(array_merge(
+            (array) $item->classes,
+            ['sidebar-item','d-flex','align-items-center','mb-3'],
+            in_array('current-menu-item', (array)$item->classes, true) ? ['sidebar-active-item'] : []
+        ));
+        $class_names = esc_attr(implode(' ', $classes));
+
+        // **۳️. آدرس لینک**
+        $href = $item->url ? ' href="'. esc_url($item->url) .'"' : '';
+
+        // **۴️. عنوان تمیز**
+        $title = apply_filters('the_title', $item->title, $item->ID);
+        $title = apply_filters('nav_menu_item_title', $title, $item, $args, $depth);
+
+        // **۵️. همه‌ی محتواهایی که قبل/بعد از لینک یا عنوان اند**
+        $all_before = 
+            ($args->before      ?? '') .
+            ($args->link_before ?? '');
+        $all_after  = 
+            ($args->link_after  ?? '') .
+            ($args->after       ?? '');
+
+        // **۶️. اگر چیزی داریم، داخل span بریز**
+        $icon_html = '';
+        if ($all_before !== '' || $all_after !== '') {
+            $icon_html = '<span class="d-flex align-items-center justify-content-center me-2 svg-container">'
+                       . $all_before
+                       . $all_after
+                       . '</span>';
+        }
+
+        // **۷️. خروجی نهایی**
+        $output .= sprintf(
+            '<a%s class="%s">%s%s</a>' . "\n",
+            $href,
+            $class_names,
+            $icon_html,
+            $title
+        );
+    }
+
+    function end_el(&$output, $item, $depth = 0, $args = null) {}
+}
+
+
+
+function render_custom_sidebar_menu($menu_name = 'primary') {
+    echo '<div class="sidebar-items-list mb-3">';
+      wp_nav_menu([
+        'menu'        => $menu_name,
+        'walker'      => new Custom_Sidebar_Menu_Walker(),
+        'container'   => false,
+        'items_wrap'  => '%3$s',   // بدون ul/li اضافی
+        'depth'       => 1,        // فقط سطح اول
+        'fallback_cb' => false,
+      ]);
+    echo '</div>';
+}
+
+
+
+// Add the following to your theme's functions.php (e.g., rastgo/inc/functions/helper-functions.php)
+
+// Register the widget class
+class Rastgo_Sidebar_Menu_Widget extends WP_Widget {
+    public function __construct() {
+        parent::__construct(
+            'rastgo_sidebar_menu_widget',
+            __('منوی سایدبار با SVG', 'rastgo'),
+            ['description' => __('نمایش منوی سایدبار با آیکن SVG و آیتم داینامیک', 'rastgo')]
+        );
+    }
+
+    // Backend form with inline JS repeater
+    public function form($instance) {
+        $items = !empty($instance['items']) ? $instance['items'] : [];
+        ?>
+        <div class="sidebar-widget-items">
+            <p><button type="button" class="button add-sidebar-item"><?php _e('افزودن آیتم', 'rastgo'); ?></button></p>
+            <div class="sidebar-items-container">
+                <?php foreach ($items as $item): ?>
+                <div class="sidebar-item-row">
+                    <p><label><?php _e('عنوان:', 'rastgo'); ?><br>
+                        <input class="widefat" name="<?php echo esc_attr($this->get_field_name('titles')); ?>[]" type="text" value="<?php echo esc_attr($item['title']); ?>">
+                    </label></p>
+                    <p><label><?php _e('لینک:', 'rastgo'); ?><br>
+                        <input class="widefat" name="<?php echo esc_attr($this->get_field_name('urls')); ?>[]" type="url" value="<?php echo esc_attr($item['url']); ?>">
+                    </label></p>
+                    <p><label><?php _e('SVG:', 'rastgo'); ?><br>
+                        <textarea class="widefat" name="<?php echo esc_attr($this->get_field_name('svgs')); ?>[]" rows="3"><?php echo esc_textarea($item['svg']); ?></textarea>
+                    </label></p>
+                    <p><button type="button" class="button remove-sidebar-item"><?php _e('حذف', 'rastgo'); ?></button></p>
+                    <hr>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <script>
+        jQuery(document).ready(function($){
+            function newRow(){
+                return '<div class="sidebar-item-row">'
+                    + '<p><label><?php echo esc_js(__('عنوان:', 'rastgo')); ?><br>'
+                    + '<input class="widefat" name="<?php echo $this->get_field_name('titles'); ?>[]" type="text"></label></p>'
+                    + '<p><label><?php echo esc_js(__('لینک:', 'rastgo')); ?><br>'
+                    + '<input class="widefat" name="<?php echo $this->get_field_name('urls'); ?>[]" type="url"></label></p>'
+                    + '<p><label><?php echo esc_js(__('SVG:', 'rastgo')); ?><br>'
+                    + '<textarea class="widefat" name="<?php echo $this->get_field_name('svgs'); ?>[]" rows="3"></textarea></label></p>'
+                    + '<p><button type="button" class="button remove-sidebar-item"><?php echo esc_js(__('حذف', 'rastgo')); ?></button></p>'
+                    + '<hr></div>';
+            }
+
+            $('.add-sidebar-item').on('click', function(){
+                $(this).closest('.sidebar-widget-items').find('.sidebar-items-container').append(newRow());
+            });
+
+            $(document).on('click', '.remove-sidebar-item', function(){
+                $(this).closest('.sidebar-item-row').remove();
+            });
+        });
+        </script>
+        <?php
+    }
+
+    // Sanitize and save
+    public function update($new_instance, $old_instance) {
+        $instance = ['items' => []];
+        $titles = $new_instance['titles'] ?? [];
+        $urls   = $new_instance['urls']   ?? [];
+        $svgs   = $new_instance['svgs']   ?? [];
+
+        foreach ($titles as $i => $title) {
+            if (trim($title) && !empty($urls[$i])) {
+                if (current_user_can('unfiltered_html')) {
+                    $svg_code = $svgs[$i];
+                } else {
+                    $allowed_tags = [
+                        'svg'   => ['xmlns'=>true,'width'=>true,'height'=>true,'viewBox'=>true,'fill'=>true,'class'=>true],
+                        'path'  => ['d'=>true,'fill'=>true,'fill-rule'=>true,'clip-rule'=>true,'stroke'=>true,'stroke-width'=>true,'stroke-linecap'=>true,'stroke-linejoin'=>true],
+                        'circle'=> ['cx'=>true,'cy'=>true,'r'=>true,'fill'=>true,'stroke'=>true,'stroke-width'=>true],
+                    ];
+                    $svg_code = wp_kses($svgs[$i], $allowed_tags);
+                }
+
+                $instance['items'][] = [
+                    'title' => sanitize_text_field($title),
+                    'url'   => esc_url_raw($urls[$i]),
+                    'svg'   => $svg_code,
+                ];
+            }
+        }
+        return $instance;
+    }
+
+    // Frontend display
+    public function widget($args, $instance) {
+        $items = $instance['items'] ?? [];
+        $current_url = untrailingslashit(home_url());
+
+        echo '<div class="sidebar-items-list mb-3">';
+        foreach ($items as $item) {
+            $url = untrailingslashit(esc_url($item['url']));
+            $active_class = ($current_url === $url) ? 'sidebar-active-item' : '';
+            echo '<a href="' . $url . '" class="sidebar-item d-flex align-items-center mb-3 ' . esc_attr($active_class) . '">';
+            echo '<span class="d-flex align-items-center justify-content-center ms-2 svg-container">' . $item['svg'] . '</span>';
+            echo esc_html($item['title']);
+            echo '</a>';
+        }
+        echo '</div>';
+    }
+}
+
+// Register widget on widgets_init
+function rastgo_register_sidebar_widget() {
+    register_widget('Rastgo_Sidebar_Menu_Widget');
+}
+add_action('widgets_init', 'rastgo_register_sidebar_widget');
+
+
+
+function rastgo_breadcrumb() {
+    if (is_front_page()) return;
+
+    $separator = '
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"
+            class="svg-icon me-4 mx-2">
+            <path d="M9 10.5848L8.409 11.25L3 6L8.409 0.75L9 1.41525L4.2765 6L9 10.5848Z" fill="currentColor" />
+        </svg>';
+
+    echo '<div class="breadcrumb-items d-flex align-items-center mb-3 mb-md-0">';
+
+    // صفحه اصلی
+    echo '<a href="' . esc_url(home_url('/')) . '" class="breadcrumb-item">صفحه اصلی</a>';
+
+    if (is_single()) {
+        $categories = get_the_category();
+
+        if (!empty($categories)) {
+            // دسته اصلی یا اولین دسته
+            $main_cat = $categories[0];
+
+            // بررسی وجود و نبود خطا
+            if (!is_wp_error($main_cat) && isset($main_cat->term_id)) {
+                // گرفتن والدین دسته (به ترتیب از ریشه تا فرزند)
+                $ancestors = get_ancestors($main_cat->term_id, 'category');
+                $ancestors = array_reverse($ancestors); // ترتیب از بالا به پایین
+
+                foreach ($ancestors as $ancestor_id) {
+                    $ancestor = get_category($ancestor_id);
+                    if (!is_wp_error($ancestor)) {
+                        echo $separator;
+                        echo '<a href="' . esc_url(get_category_link($ancestor->term_id)) . '" class="breadcrumb-item">' . esc_html($ancestor->name) . '</a>';
+                    }
+                }
+
+                // در نهایت دسته خود پست
+                echo $separator;
+                echo '<a href="' . esc_url(get_category_link($main_cat->term_id)) . '" class="breadcrumb-item breadcrumb-active-item">' . esc_html($main_cat->name) . '</a>';
+            }
+        }
+    }
+
+    echo '</div>';
+}
+
+
+
+// hamberger menu
+
+/**
+ * Render Bootstrap offcanvas mobile menu with support for nested sub-menus
+ *
+ * @param string $theme_location Menu location identifier registered via register_nav_menus().
+ */
+function rastgo_mobile_offcanvas_menu( $theme_location ) {
+    $locations = get_nav_menu_locations();
+    if ( empty( $locations[ $theme_location ] ) ) {
+        return;
+    }
+
+    $menu_id    = $locations[ $theme_location ];
+    $menu_items = wp_get_nav_menu_items( $menu_id );
+    if ( empty( $menu_items ) ) {
+        return;
+    }
+
+    // Build a tree of items: parent_id => [ items... ]
+    $tree = [];
+    foreach ( $menu_items as $item ) {
+        $tree[ intval( $item->menu_item_parent ) ][] = $item;
+    }
+
+    // Recursive renderer
+    $render_menu = function( $parent_id ) use ( &$render_menu, $tree ) {
+        if ( empty( $tree[ $parent_id ] ) ) {
+            return '';
+        }
+
+        $html = '<div class="nav flex-column">';
+        foreach ( $tree[ $parent_id ] as $item ) {
+            $has_children = ! empty( $tree[ $item->ID ] );
+            $collapse_id  = 'submenu-' . $item->ID;
+
+            // Container for one menu item
+            $html .= '<div class="mobile-nav-item d-flex align-items-center mb-1">';
+
+                // 1. لینک منو
+                $html .= '<a href="' . esc_url( $item->url ) . '" class="mobile-nav-link">' 
+                      . esc_html( $item->title ) 
+                      . '</a>';
+
+                // 2. اگر زیرمنو دارد، کلید collapse
+                if ( $has_children ) {
+                    $html .= '<button class="btn p-0  toggle-submenu" type="button" '
+                           . 'data-bs-toggle="collapse" data-bs-target="#' . esc_attr( $collapse_id ) . '" '
+                           . 'aria-expanded="false" aria-controls="' . esc_attr( $collapse_id ) . '">'
+                           .   '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" '
+                           .   'fill="currentColor" class="svg-icon" viewBox="0 0 16 16">'
+                           .     '<path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293'
+                           .     'l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6'
+                           .     'a.5.5 0 0 1 0-.708z"/>'
+                           .   '</svg>'
+                           . '</button>';
+                }
+
+            $html .= '</div>'; // .mobile-nav-item
+
+            // زیرمنو
+            if ( $has_children ) {
+                $html .= '<div class="collapse ms-3" id="' . esc_attr( $collapse_id ) . '">';
+                $html .= $render_menu( $item->ID );
+                $html .= '</div>';
+            }
+        }
+        $html .= '</div>'; // .nav
+
+        return $html;
+    };
+
+    // Offcanvas wrapper
+    ?>
+    <div class="offcanvas offcanvas-end cs-offcanvas" tabindex="-1" id="offcanvasMobileNavs" aria-labelledby="offcanvasMobileNavsLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasMobileNavsLabel"><?php esc_html_e( 'منوی سایت', 'yourtheme' ); ?></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="<?php esc_attr_e( 'Close', 'yourtheme' ); ?>"></button>
+      </div>
+      <div class="offcanvas-body">
+        <?php echo $render_menu( 0 ); ?>
+      </div>
+    </div>
+    <?php
+}

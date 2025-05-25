@@ -101,9 +101,9 @@ class i8_menu extends WP_Widget
         echo $args['before_widget'];
 
         if ($hide_title != 'on') {
-            echo '<div class="text-title box-title box-title-mini display-4">';
+            echo '<div class="footer-navs-list"><h4 class="nav-title">';
             echo $args['before_title']  . $title  .  $args['after_title'];
-            echo $sub_title_print . '</div>';
+            echo $sub_title_print . '</h4>';
         } else {
             echo '<div class="text-title box-title box-title-mini display-4 py-4"></div>';
         }
@@ -113,7 +113,7 @@ class i8_menu extends WP_Widget
 
 
 <?php
-        echo $args['after_widget'];
+        echo $args['after_widget'].'</div>';
     }
 }
 

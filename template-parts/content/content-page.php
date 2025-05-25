@@ -155,11 +155,7 @@ $tag_icon = customizeSVG($tag_icon, 'var(--i8-dark-primary)', 'var(--i8-dark-pri
         </div>
 
 
-        <?php
-        if (comments_open() || get_comments_number()) {
-            comments_template();
-        }
-        ?>
+
 
     </section>
 

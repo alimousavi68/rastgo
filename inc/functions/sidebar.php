@@ -229,6 +229,20 @@ function i8_add_custom_sidebar()
         'after_sidebar'  => '',
         'show_in_rest'   => false,
     ));
+        //  footer right sidebar - 2ساید بار فوتر - وسط
+    register_sidebar(array(
+        'name'           => '2ساید بار فوتر - وسط',
+        'id'             => 'fcc-sidebar',
+        'class'          => 'fcc-sidebar',
+        'description'    => 'این سایدبار در فوتر تمامی صفحات و در وسط قرار می گیرد.',
+        'before_widget'  => '<div class="widget col-12 col-lg-6 col-md-6 col-sm-12 d-flex flex-column align-items-center align-content-center ">',
+        'after_widget'   => '</div>',
+        'before_title'   => '',
+        'after_title'    => '',
+        'before_sidebar' => '',
+        'after_sidebar'  => '',
+        'show_in_rest'   => false,
+    ));
 
     //  footer left sidebar - ساید بار فوتر - چپ
     register_sidebar(array(

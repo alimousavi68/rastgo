@@ -1,50 +1,43 @@
 <?php
 //footer
 ?>
-<!-- footer -->
-<footer id="footer" class="footer-dark">
 
 
-  <div class="container">
-    <?php if (is_active_sidebar('fr-sidebar') || is_active_sidebar('fc-sidebar') || is_active_sidebar('fl-sidebar')): ?>
-      <div class="row border-bottom py-3">
-        <div
-          class="align-items-center align-items-xl-start col-md-12 col-sm-24 col-xl-5 d-flex flex-column justify-content-center justify-content-lg-start ">
-          <?php
-          dynamic_sidebar('fr-sidebar');
-          ?>
+<footer class="footer px-3 px-lg-0">
+  <div class="footer-container mx-auto">
+    <div class="container">
+      <div class="row">
+
+        <div class="col-md-6 col-lg-3">
+          <?php dynamic_sidebar('fr-sidebar'); ?>
         </div>
 
-        <div class="col-24 col-lg-14 col-md-14 col-md-24 col-sm-24 col-xl-14 d-flex flex-row gap-3">
-          <div class="row w-100">
-            <?php
-            dynamic_sidebar('fc-sidebar');
-            ?>
-          </div>
+        <div class="col-md-6 col-lg-3">
+          <?php dynamic_sidebar('fc-sidebar'); ?>
         </div>
 
-        <div
-          class="col-lg-5 col-md-12 col-md-5 col-sm-24 col-xl-5 d-flex justify-content-center justify-content-lg-end order-md-2">
-          <?php
-          dynamic_sidebar('fl-sidebar');
-          ?>
+        <div class="col-md-6 col-lg-3">
+          <?php dynamic_sidebar('fcc-sidebar'); ?>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <?php dynamic_sidebar('fl-sidebar'); ?>
         </div>
 
       </div>
-    <?php endif; ?>
+    </div>
   </div>
-
   <!-- footer menu -->
-  <div class="bottom-menu pt-2 pb-5">
+  <div class="col-12 bottom-menu pt-2 pb-5">
 
     <div class="container p-3 ">
       <div class="row d-flex text-center text-lg-end text-md-end text-sm-center row-gap-3 flex-wrap-reverse">
-        <span class="col-24 col-lg-20 col-md-20 col-sm-24 f13">تمامی حقوق مادی و معنوی این وبسایت متعلق به پایگاه خبری
+        <span class="col-12 col-lg-10 col-md-10 col-sm-12 ">تمامی حقوق مادی و معنوی این وبسایت متعلق به پایگاه خبری
           تحلیلی ببین و بخون می باشد و هرگونه کپی برداری با ذکر منبع بلامانع است.</span>
-        <div class="col-24 col-lg-4 col-sm-24 col-md-4">
+        <div class="col-12 col-lg-2 col-sm-12 col-md-2">
           <div
             class="d-xl-flex d-lg-flex d-md-flex justify-content-center gap-2 social-links justify-content-center align-items-center">
-            <span class="f13">طراحی و تولید: <a href="https://ihasht.ir/" class="text-white i8-blink" title="هشت بهشت"
+            <span class="">طراحی و تولید: <a href="https://ihasht.ir/" class="text-white i8-blink" title="هشت بهشت"
                 alt="Website designer: Hasht Behesht professional website design site" target="_blank">هشت بهشت</a>
             </span>
           </div>
@@ -55,163 +48,41 @@
   </div>
   <!-- End - footer menu -->
 </footer>
-<?php wp_footer(); ?>
+
+
+
+<?php rastgo_mobile_offcanvas_menu( 'mobile' ); ?>
+
+
+
+<!-- Search Modal -->
+<div class="modal fade search-modal" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="searchModalLabel">جست و جو</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="form-control" id="" placeholder="محتوا">
+      </div>
+      <div class="modal-footer justify-content-start">
+        <button type="button" class="btn btn-success">جست و جو</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END Search Modal -->
+
+
+
 <!-- footer -->
+
+<!-- // link to top -->
 <script type="text/javascript" defer>
-  // darkmode
-  const darkModeSwitch = document.querySelector(".dark-mode-switch");
-  const darkModeSwitch1 = document.querySelector(".dark-mode-switch1");
-
-  // بررسی وضعیت دارک مود از LocalStorage
-  const isDarkMode = localStorage.getItem("darkMode") === "true";
-
-  // تنظیم وضعیت اولیه بر اساس وضعیت ذخیره شده
-  document.body.classList.toggle("dark-mode", isDarkMode);
-  darkModeSwitch.classList.toggle("active", isDarkMode);
-  darkModeSwitch1.classList.toggle("active", isDarkMode);
-
-  darkModeSwitch.addEventListener("click", () => {
-    const isActive = darkModeSwitch.classList.toggle("active");
-    document.body.classList.toggle("dark-mode", isActive);
-
-    // ذخیره وضعیت دارک مود در LocalStorage
-    localStorage.setItem("darkMode", isActive);
-  });
-  darkModeSwitch1.addEventListener("click", () => {
-    const isActive = darkModeSwitch1.classList.toggle("active");
-    document.body.classList.toggle("dark-mode", isActive);
-
-    // ذخیره وضعیت دارک مود در LocalStorage
-    localStorage.setItem("darkMode", isActive);
-  });
-</script>
-<?php if (is_singular()): ?>
-  <!-- shared button -->
-  <script type="text/javascript" defer>
-    document.addEventListener('DOMContentLoaded', function () {
-      // cache dom
-      var shareBtn = document.querySelector('.share-btn-mini');
-      var shareBtn = document.querySelector('.share-btn');
-      var shareUrl = document.querySelector('.share-url');
-      var shareContainer = document.querySelector('.share-container');
-      var notificationButton = document.querySelector('.notification-button');
-
-      // set data
-      var url = '<?php echo bloginfo('url'); ?>/?p=<?php the_ID(); ?>';
-      var shared = false;
-
-      /**
-       * Share link function
-       */
-      function shareLink(e) {
-        e.preventDefault(); // Prevent the default click behavior
-
-        // set active class
-        shareBtn.classList.toggle('active');
-        shareUrl.classList.toggle('active');
-        shareContainer.classList.toggle('active');
-
-        if (shared === false) {
-
-          // trigger notification alert
-          notificationButton.classList.add('active');
-          shared = true;
-          shareBtn.textContent = 'بستن';
-          shareUrl.textContent = url;
-
-          // Create a temporary textarea element to copy the URL to clipboard
-          var tempTextArea = document.createElement('textarea');
-          tempTextArea.value = url;
-          document.body.appendChild(tempTextArea);
-          tempTextArea.select();
-
-          try {
-            // Execute the copy command
-            var successful = document.execCommand('copy');
-            var msg = successful ? 'موفق' : 'ناموفق';
-
-          } catch (err) {
-          } finally {
-            // Remove the temporary textarea
-            document.body.removeChild(tempTextArea);
-          }
-
-        } else {
-          shared = false;
-          shareBtn.textContent = 'کپی لینک';
-        }
-      }
-
-      /**
-       * Removes the active class after a set period of time
-       */
-      function fadeOutNotification() {
-        notificationButton.classList.remove('active');
-      }
-
-      // bind events
-      shareBtn.addEventListener('click', shareLink);
-      notificationButton.addEventListener('transitionend', fadeOutNotification);
-    });
-
-
-    // print button
-    document.getElementById('printButton').addEventListener('click', function () {
-      window.print();
-    });
-  </script>
-
-
-
-<?php endif; ?>
-
-
-<script type="text/javascript" defer>
-  document.addEventListener('DOMContentLoaded', function () {
-    var mini_logo = document.getElementById("mini-logo");
-    var windowWidth = window.innerWidth;
-
-    window.onscroll = function () {
-      var headerHeight = document.getElementById("header-container").offsetHeight;
-      var header = document.getElementById("header-container");
-      var menu = document.getElementById("i8-main-menu-frame");
-
-      // Get the offset position of the navbar
-      var sticky = menu.offsetTop;
-      // console.log('offset of top:  ' + sticky);
-
-      // Add the "sticky" class to the navbar when you reach its scroll position. Remove "sticky" when you leave the scroll position.
-      if (window.pageYOffset > sticky) {
-        // console.log('widnow width : ' + windowWidth);
-
-        if (windowWidth < 768) {
-          // console.log('mobile width : ' + windowWidth);
-          header.classList.add("sticky");
-        } else {
-          menu.classList.add("sticky");
-          mini_logo.classList.add("i8-show");
-        }
-      }
-
-      if (window.pageYOffset < headerHeight) {
-        if (windowWidth < 768) {
-          header.classList.remove("sticky");
-        } else {
-          menu.classList.remove("sticky");
-          mini_logo.classList.remove("i8-show");
-        }
-      }
-
-      // Calculate the position from right based on the scroll position
-      var positionFromRight = windowWidth - scroll;
-      mini_logo.style.right = positionFromRight + 'px';
-    };
-  });
-
-</script>
-
-<script type="text/javascript" defer>
-  document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', function() {
     "use strict";
 
     // Scroll back to top
@@ -224,7 +95,7 @@
       progressPath.getBoundingClientRect();
       progressPath.style.transition = progressPath.style.WebkitTransition = 'stroke-dashoffset 10ms linear';
 
-      var updateProgress = function () {
+      var updateProgress = function() {
         var scroll = window.scrollY || document.documentElement.scrollTop;
         var height = (document.documentElement.scrollHeight || document.body.scrollHeight) - window.innerHeight;
         var progress = pathLength - (scroll * pathLength) / height;
@@ -236,7 +107,7 @@
 
       var offset = 50;
       var duration = 550;
-      window.addEventListener('scroll', function () {
+      window.addEventListener('scroll', function() {
         var progressWrap = document.querySelector('.progress-wrap');
         if (window.scrollY > offset) {
           progressWrap.classList.add('active-progress');
@@ -245,7 +116,7 @@
         }
       });
 
-      document.querySelector('.progress-wrap').addEventListener('click', function (event) {
+      document.querySelector('.progress-wrap').addEventListener('click', function(event) {
         event.preventDefault();
         window.scrollTo({
           top: 0,
@@ -254,7 +125,6 @@
       });
     }
   });
-
 </script>
 
 <style>
@@ -358,6 +228,62 @@
     <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" />
   </svg>
 </div>
+<!-- end link to top  -->
+
+<!-- theme switch -->
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/assets/js/bootstrap.bundle.min.js"></script>
+<?php wp_footer(); ?>
+
+<script src="<?php echo get_template_directory_uri(); ?>/assets/js/persianDatepicker.min.js"></script>
+<script src="<?php echo get_template_directory_uri(); ?>/assets/js/select2.min.js"></script>
+<script>
+  (function($) {
+    // Change Theme Button
+    jQuery("#themeSwitch").on("click", function() {
+      jQuery(this).toggleClass("switch-active");
+      jQuery("html").toggleClass("dark-theme");
+    });
+
+    // Breadcrumb Action 
+    let resetTimeout;
+
+    jQuery(".breadcrumb-list-item").on("mouseenter", function() {
+      clearTimeout(resetTimeout); // جلوگیری از مخفی‌سازی در حین جابجایی
+
+      let $this = jQuery(this);
+      let $attr = $this.attr("breadcrumb");
+
+      // مخفی‌سازی همه زیرمنوها و حذف اکتیو از همه
+      jQuery(".breadcrumb-list-item").removeClass("breadcrumb-list-active");
+      jQuery(".breadcrumb-boxs").removeClass("breadcrumb-boxs-active").hide();
+
+      // فعال‌سازی آیتم فعلی و نمایش زیرمنو مربوطه
+      $this.addClass("breadcrumb-list-active");
+      jQuery("#" + $attr).addClass("breadcrumb-boxs-active").fadeIn(200);
+    });
+
+    // وقتی موس از کل ناحیه breadcrumb خارج شد، همه چیز به حالت پیش‌فرض برگرده
+    jQuery(".breadcrumb-box-section").on("mouseleave", function() {
+      resetTimeout = setTimeout(function() {
+        jQuery(".breadcrumb-list-item").removeClass("breadcrumb-list-active");
+        jQuery(".breadcrumb-boxs").removeClass("breadcrumb-boxs-active").hide();
+
+        // فعال‌سازی آیتم اول و زیرمنوی مربوطه
+        jQuery(".breadcrumb-list-item").first().addClass("breadcrumb-list-active");
+        jQuery(".breadcrumb-boxs").first().addClass("breadcrumb-boxs-active").fadeIn(200);
+      }, 300); // تأخیر برای جلوگیری از پرش ناخواسته
+    });
+
+    // جلوگیری از بسته شدن وقتی موس روی زیرمنوها هست
+    jQuery(".breadcrumb-boxs").on("mouseenter", function() {
+      clearTimeout(resetTimeout);
+    });
+
+    jQuery(".usage").persianDatepicker();
+    jQuery('.js-select2-01').select2();
+
+  })(jQuery);
+</script>
 
 </body>
 
