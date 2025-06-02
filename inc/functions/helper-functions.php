@@ -46,7 +46,7 @@ function i8_custom_pagination()
     ));
 
     if ($paginate_links) {
-        ?>
+?>
         <div class="row mt-3 py-2 mx-0 d-flex align-content-center justify-content-center">
             <div class="number-pagintion py-2 my-2">
                 <div class="pagination pagination-archive">
@@ -57,7 +57,7 @@ function i8_custom_pagination()
                 </div>
             </div>
         </div>
-        <?php
+    <?php
     }
 }
 
@@ -80,19 +80,6 @@ function i8_limit_text($text, $limit_count, $ending_text)
     echo $limited_text;
 }
 
-/**
- * 
- * 
- *  add Sub title to post edit page
- *
- * 
- */
-function add_custom_subtitle_field()
-{
-    add_action('edit_form_after_title', 'custom_subtitle_field');
-}
-
-add_action('add_meta_boxes', 'add_custom_subtitle_field');
 
 function custom_subtitle_field()
 {
@@ -109,147 +96,6 @@ function save_post_subtitle($post_id)
 }
 
 add_action('save_post', 'save_post_subtitle');
-
-
-
-
-/**
- * 
- * Add Primary Category meta data Feature to post page 
- * با این قابلیت میتونیم یک دسته بندی اصلی از بین دسته های انتخاب شده در زمان انتشار مطلب انتخاب کنیم
- * 
- */
-
-// اضافه کردن یک متا باکس جدید به صفحه ایجاد و ویرایش پست ها
-add_action('add_meta_boxes', 'add_primary_category_meta_box');
-function add_primary_category_meta_box()
-{
-    add_meta_box('primary_category_meta_box', 'داشبورد ویژه', 'render_primary_category_meta_box', 'post', 'side', 'high');
-}
-
-// نمایش متا باکس دسته بندی اصلی
-function render_primary_category_meta_box($post)
-{
-    // بررسی آیا دسته بندی اصلی قبلا انتخاب شده است
-    $selected_category = get_post_meta($post->ID, 'hasht_primary_category', true);
-
-    // دریافت لیست دسته بندی های پست ها
-    $categories = get_categories(array('hide_empty' => false));
-
-    // نمایش لیست کشویی با دسته بندی ها
-    echo '<div class="misc-pub-section"><label for="hasht-primary-category">انتخاب دسته بندی اصلی:</label>';
-    echo '<select name="hasht_primary_category" class="widefat" id="hasht-primary-category">';
-    echo '<option value="">انتخاب کنید</option>';
-    foreach ($categories as $category) {
-        echo '<option value="' . esc_attr($category->cat_ID) . '" ' . selected($selected_category, $category->cat_ID, false) . '>' . esc_html($category->name) . '</option>';
-    }
-    echo '</select></div>';
-
-
-    ?>
-    <!-- نام منبع -->
-    <div class="misc-pub-section">
-        <label for="hasht-reference-name">نام منبع:</label>
-        <input type="text" name="hasht-reference-name" id="hasht-reference-name" class="widefat"
-            value="<?php echo get_post_meta($post->ID, 'hasht-reference-name', true); ?>">
-    </div>
-
-    <!-- لینک منبع -->
-    <div class="misc-pub-section">
-        <label for="hasht-reference-link">لینک منبع:</label>
-        <input type="text" name="hasht-reference-link" id="hasht-reference-link" class="widefat"
-            value="<?php echo get_post_meta($post->ID, 'hasht-reference-link', true); ?>">
-    </div>
-
-    <!-- نام نویسنده -->
-    <div class="misc-pub-section">
-        <label for="hasht-author-name">نام نویسنده:</label>
-        <input type="text" name="hasht-author-name" id="hasht-author-name" class="widefat"
-            value="<?php echo get_post_meta($post->ID, 'hasht-author-name', true); ?>">
-    </div>
-
-
-    <!-- نوع پست -->
-    <?php
-    $array_post_structure = array('video', 'imgae', 'text', 'hot','none-thumbnail');
-    $selected_post_structure = get_post_meta($post->ID, 'i8_post_structure', true);
-    $selected_post_structure = ($selected_post_structure == '') ? 'text' : $selected_post_structure;
-    ?>
-    <div class="misc-pub-section"><label for="hasht-primary-category">
-            <label for="i8_post_structure">نوع پست</label>
-            <select name="i8_post_structure" id="i8_post_structure" class="widefat">
-                <option value="text" <?php echo ($selected_post_structure == 'text') ? 'selected' : ''; ?>>ساده</option>
-                <option value="none-thumbnail" <?php echo ($selected_post_structure == 'none-thumbnail') ? 'selected' : ''; ?>>بدون تصویر </option>
-                <option value="image" <?php echo ($selected_post_structure == 'image') ? 'selected' : ''; ?>>تصویری</option>
-                <option value="video" <?php echo ($selected_post_structure == 'video') ? 'selected' : ''; ?>>ویدیو</option>
-                <option value="hot" <?php echo ($selected_post_structure == 'hot') ? 'selected' : ''; ?>>داغ</option>
-            </select>
-    </div>
-
-    <!-- لینک ویدیو -->
-
-    <!-- لینک امبد -->
-    <div id="hasht-video-embbed-sec" class="misc-pub-section " <?php echo ($selected_post_structure != 'video') ? ' style="display:none;" ' : ''; ?>>
-        <label for="hasht-video-embbed">کد امبد:</label>
-        <input type="text" name="hasht-video-embbed" id="hasht-video-embbed" class="widefat"
-            value="<?php echo esc_attr(get_post_meta($post->ID, 'hasht-video-embbed', true)); ?>">
-    </div>
-
-    <!-- لینک مستقیم -->
-    <div id="hasht-video-link-sec" class="misc-pub-section " <?php echo ($selected_post_structure != 'video') ? ' style="display:none;" ' : ''; ?>>
-        <label for="hasht-video-link">لینک ویدیو:</label>
-        <input type="text" name="hasht-video-link" id="hasht-video-link" class="widefat"
-            value="<?php echo get_post_meta($post->ID, 'hasht-video-link', true); ?>">
-    </div>
-
-    <!-- کیفیت زیاد - لینک مستقیم -->
-    <div id="hasht-video-link-high-sec" class="misc-pub-section " <?php echo ($selected_post_structure != 'video') ? ' style="display:none;" ' : ''; ?>>
-        <label for="hasht-video-link-high">لینک ویدیو(کیفیت بالا)</label>
-        <input type="text" name="hasht-video-link-high" id="hasht-video-link-high" class="widefat"
-            value="<?php echo get_post_meta($post->ID, 'hasht-video-link-high', true); ?>">
-    </div>
-    <!-- کیفیت کم - لینک مستقیم -->
-    <div id="hasht-video-link-low-sec" class="misc-pub-section " <?php echo ($selected_post_structure != 'video') ? ' style="display:none;" ' : ''; ?>>
-        <label for="hasht-video-link-low">لینک ویدیو(کیفیت پایین)</label>
-        <input type="text" name="hasht-video-link-low" id="hasht-video-link-low" class="widefat"
-            value="<?php echo get_post_meta($post->ID, 'hasht-video-link-low', true); ?>">
-    </div>
-
-
-    <!-- نمایش تاریخ  -->
-    <?php
-    $i8_hide_date = (get_post_meta($post->ID, 'i8_hide_date', true) == 'on') ? ' checked' : '';
-    // فیلد مخفی سازی تاریخ دلخواه
-    echo '<div class="misc-pub-section"><label  for="i8_hide_date"> مخفی سازی تاریخ ';
-    echo '<input type="checkbox" class="widefat" name="i8_hide_date" id="i8_hide_date" ' . $i8_hide_date . '>';
-    echo '</label></div>';
-    ?>
-
-    <script>
-        jQuery(document).ready(function ($) {
-            // هنگام تغییر در selectbox
-            $("#i8_post_structure").change(function () {
-                var selectedValue = $(this).val();
-
-                // اگر گزینه مشخص شده "option2" باشد
-                if (selectedValue === "video") {
-                    // نمایش input باکس
-                    $("#hasht-video-link-sec").show();
-                    $("#hasht-video-embbed-sec").show();
-                } else {
-                    // پنهان کردن input باکس
-                    $("#hasht-video-link-sec").hide();
-                    $("#hasht-video-embbed-sec").hide();
-                }
-
-            });
-        });
-    </script>
-
-
-    <?php
-}
-
 
 
 /**
@@ -509,8 +355,8 @@ function i8_breadcrumb(
                 $cat_color = get_term_meta($primary_cat['cat_id'], 'i8_CustomTerm_color', true) ? get_term_meta($primary_cat['cat_id'], 'i8_CustomTerm_color', true) : 'var(--bs-secondary)';
                 echo '<a class=""  href="' . $primary_cat['cat_url'] . '">' . $primary_cat['cat_name'] . '</a>';
             else:
-                // the_category('/ ');
-                // echo $delimiter;
+            // the_category('/ ');
+            // echo $delimiter;
             endif;
         } elseif (is_page()) {
             if ($post->post_parent) {
@@ -636,7 +482,6 @@ function print_mobile_menu($all_items, $parent_items_level)
             echo '<li><label><a href="' . esc_html($item->url) . '" >' . esc_html($item->title) . '</label></a></li>';
         }
     }
-
 }
 
 
@@ -688,7 +533,7 @@ function i8_show_social_icons($width = 16, $height = 16)
     $eitta = sanitize_url(get_theme_mod('i8_social_link_eitta'));
     $bale = sanitize_url(get_theme_mod('i8_social_link_bale'));
     $rubika = sanitize_url(get_theme_mod('i8_social_link_rubika'));
-    ?>
+?>
     <div class="d-flex">
         <div class="d-none d-xl-flex d-lg-flex d-md-flex justify-content-center gap-2 social-links ">
             <?php if ($twitter): ?>
@@ -771,7 +616,7 @@ function i8_show_social_icons($width = 16, $height = 16)
                 </a>
 
             <?php endif; ?>
-            <?php if ($eitta): ?>  
+            <?php if ($eitta): ?>
                 <a class="p-0 p-lg-0 p-sm-1 dark-btn" target="_blank" href="<?php echo $eitta; ?>" alt="eitta share button"
                     aria-label="eitta share button">
 
@@ -889,7 +734,7 @@ function custom_lightbox_gallery()
         global $post;
 
         if (has_shortcode($post->post_content, 'gallery')) {
-            ?>
+    ?>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
             <style>
                 :root {
@@ -1033,7 +878,6 @@ function custom_lightbox_gallery()
             </div>
 
             <script>
-
                 document.addEventListener("DOMContentLoaded", () => {
                     // --- Create LightBox
                     const galleryGrid = document.querySelector(".gallery-grid");
@@ -1116,7 +960,7 @@ function custom_lightbox_gallery()
                     }
 
                     for (const link of links) {
-                        link.addEventListener("click", function (e) {
+                        link.addEventListener("click", function(e) {
                             e.preventDefault();
                             const currentImg = link.querySelector("img");
                             const lightboxCarousel = document.getElementById("lightboxCarousel");
@@ -1168,10 +1012,9 @@ function custom_lightbox_gallery()
                         exitFS();
                     });
                 });
-
             </script>
 
-            <?php
+        <?php
 
 
         }
@@ -1184,116 +1027,13 @@ add_action('wp_footer', 'custom_lightbox_gallery', 10, 1);
 
 
 
-// inline reltead post
-function insert_related_post_link_in_content($content)
-{
-    // دریافت پست‌های مرتبط با برچسب‌های پست فعلی
-    $related_posts = get_posts(
-        array(
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'post_tag', // نوع دسته‌بندی (در اینجا برچسب)
-                    'field' => 'id', // فیلد برای مقایسه (می‌تواند id یا slug باشد)
-                    'terms' => wp_get_post_terms(get_the_ID(), 'post_tag', array("fields" => "ids")), // برچسب‌های پست فعلی
-                ),
-            ),
-            'post__not_in' => array(get_the_ID()),
-            'posts_per_page' => 3, // تعداد پست‌های مرتبط که می‌خواهید نمایش داده شود
-            'ignore_sticky_posts' => 1
-        )
-    );
 
-    // اگر پست‌های مرتبط وجود داشته باشند
-    if ($related_posts) {
-        $first_related_post = $related_posts[0];
-        $second_related_post = isset($related_posts[1]) ? $related_posts[1] : null;
-        $third_related_post = isset($related_posts[2]) ? $related_posts[2] : null;
-
-        // تفکیک محتوا به پاراگراف‌ها
-        $paragraphs = explode('</p>', $content);
-        $paragraphs_count = count($paragraphs);
-
-
-        $ads_pos_1 = null;
-        $ads_pos_2 = null;
-        $ads_pos_3 = null;
-
-        if ($paragraphs_count <= 4 && $paragraphs_count >= 1) {
-            $ads_pos_1 = (ceil($paragraphs_count / 2))-1;
-        }
-        if ($paragraphs_count <= 8 && $paragraphs_count > 4) {
-            $ads_pos_1 = (ceil(($paragraphs_count / 4)))-1;
-            $ads_pos_2 = (ceil(($paragraphs_count / 2)))-1; 
-        }
-        if ($paragraphs_count > 8 ) {
-            $ads_pos_1 = (ceil($paragraphs_count / 6))-1;
-            $ads_pos_2 = (ceil($paragraphs_count / 4)-1);
-            $ads_pos_3 = (ceil($paragraphs_count / 2))-1;
-            
-        }
-        // $ads_pos_1 = ceil($paragraphs_count / 2);
-        // $ads_pos_2 = ceil($paragraphs_count / 3);
-        // $ads_pos_3 = ceil($paragraphs_count / 4);
-
-
-
-        // لینک اول و دوم را تهیه می‌کنیم
-        if ($first_related_post && $ads_pos_1 != null) {
-            $first_link = '
-            <div class="inline-related-box d-flex flex-column gap-2 align-items-start py-3">
-                <h4 class="releated-head ">همچنین بخوانید: </h4>
-                <div class="d-flex flex-row gap-3">
-                    <a href="' . get_permalink($first_related_post->ID) . '" class="">'
-                . get_the_post_thumbnail($first_related_post, 'i8-sm-100-75', array("width" => 100, "height" => 75)) . '
-                    </a>
-                    <a href="' . get_permalink($first_related_post->ID) . '" class="border-0" > ' . get_the_title($first_related_post->ID) . '</a>
-                </div>
-            </div>';
-            ?>
-
-
-            <?php
-            $paragraphs[$ads_pos_1] .= $first_link;
-        }
-        if ($second_related_post && $ads_pos_2 != null) {
-            $sec_link = '
-            <div class="inline-related-box d-flex flex-column gap-2 align-items-start py-3">
-                <h4 class="releated-head ">همچنین بخوانید: </h4>
-                <div class="d-flex flex-row gap-3">
-                    <a href="' . get_permalink($second_related_post->ID) . '" class="">'
-                . get_the_post_thumbnail($second_related_post, 'i8-sm-100-75', array("width" => 100, "height" => 75)) . '
-                    </a>
-                    <a href="' . get_permalink($second_related_post->ID) . '" class="border-0" > ' . get_the_title($second_related_post->ID) . '</a>
-                </div>
-            </div>';
-            $paragraphs[$ads_pos_2] .= $sec_link;
-        }
-        if ($third_related_post && $ads_pos_3 != null ) {
-            $third_link = '
-            <div class="inline-related-box d-flex flex-column gap-2 align-items-start py-3">
-                <h4 class="releated-head ">همچنین بخوانید: </h4>
-                <div class="d-flex flex-row gap-3">
-                    <a href="' . get_permalink($third_related_post->ID) . '" class="">'
-                . get_the_post_thumbnail($third_related_post, 'i8-sm-100-75', array("width" => 100, "height" => 75)) . '
-                    </a>
-                    <a href="' . get_permalink($third_related_post->ID) . '" class="border-0" > ' . get_the_title($third_related_post->ID) . '</a>
-                </div>
-            </div>';
-            $paragraphs[$ads_pos_3] .= $third_link;
-        }
-
-        // ایجاد محتوای جدید با پاراگراف‌های ویرایش شده
-        $content = implode('</p>', $paragraphs);
-    }
-
-    return $content;
-}
-add_filter('the_content', 'insert_related_post_link_in_content');
 
 
 
 // factiran functions
-function render_custom_breadcrumb_menu($theme_location) {
+function render_custom_breadcrumb_menu($theme_location)
+{
     if (($locations = get_nav_menu_locations()) && isset($locations[$theme_location])) {
         $menu = wp_get_nav_menu_object($locations[$theme_location]);
         $menu_items = wp_get_nav_menu_items($menu->term_id);
@@ -1301,7 +1041,7 @@ function render_custom_breadcrumb_menu($theme_location) {
         if (!$menu_items) return;
 
         // مرتب‌سازی بر اساس ترتیب
-        usort($menu_items, function($a, $b) {
+        usort($menu_items, function ($a, $b) {
             return $a->menu_order - $b->menu_order;
         });
 
@@ -1355,17 +1095,20 @@ function render_custom_breadcrumb_menu($theme_location) {
 }
 
 
-function load_jquery_for_breadcrumb() {
+function load_jquery_for_breadcrumb()
+{
     wp_enqueue_script('jquery'); // اطمینان از لود شدن jQuery
 }
 add_action('wp_enqueue_scripts', 'load_jquery_for_breadcrumb');
 
-class Custom_Sidebar_Menu_Walker extends Walker_Nav_Menu {
+class Custom_Sidebar_Menu_Walker extends Walker_Nav_Menu
+{
     // ما فقط سطح اول را می‌خواهیم
     function start_lvl(&$output, $depth = 0, $args = null) {}
     function end_lvl(&$output, $depth = 0, $args = null) {}
 
-    function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
+    function start_el(&$output, $item, $depth = 0, $args = null, $id = 0)
+    {
         // فقط آیتم‌های عمق 0
         if ($depth !== 0) {
             return;
@@ -1377,23 +1120,23 @@ class Custom_Sidebar_Menu_Walker extends Walker_Nav_Menu {
         // **۲️. کلاس‌ها**
         $classes = array_filter(array_merge(
             (array) $item->classes,
-            ['sidebar-item','d-flex','align-items-center','mb-3'],
+            ['sidebar-item', 'd-flex', 'align-items-center', 'mb-3'],
             in_array('current-menu-item', (array)$item->classes, true) ? ['sidebar-active-item'] : []
         ));
         $class_names = esc_attr(implode(' ', $classes));
 
         // **۳️. آدرس لینک**
-        $href = $item->url ? ' href="'. esc_url($item->url) .'"' : '';
+        $href = $item->url ? ' href="' . esc_url($item->url) . '"' : '';
 
         // **۴️. عنوان تمیز**
         $title = apply_filters('the_title', $item->title, $item->ID);
         $title = apply_filters('nav_menu_item_title', $title, $item, $args, $depth);
 
         // **۵️. همه‌ی محتواهایی که قبل/بعد از لینک یا عنوان اند**
-        $all_before = 
+        $all_before =
             ($args->before      ?? '') .
             ($args->link_before ?? '');
-        $all_after  = 
+        $all_after  =
             ($args->link_after  ?? '') .
             ($args->after       ?? '');
 
@@ -1401,9 +1144,9 @@ class Custom_Sidebar_Menu_Walker extends Walker_Nav_Menu {
         $icon_html = '';
         if ($all_before !== '' || $all_after !== '') {
             $icon_html = '<span class="d-flex align-items-center justify-content-center me-2 svg-container">'
-                       . $all_before
-                       . $all_after
-                       . '</span>';
+                . $all_before
+                . $all_after
+                . '</span>';
         }
 
         // **۷️. خروجی نهایی**
@@ -1421,16 +1164,17 @@ class Custom_Sidebar_Menu_Walker extends Walker_Nav_Menu {
 
 
 
-function render_custom_sidebar_menu($menu_name = 'primary') {
+function render_custom_sidebar_menu($menu_name = 'primary')
+{
     echo '<div class="sidebar-items-list mb-3">';
-      wp_nav_menu([
+    wp_nav_menu([
         'menu'        => $menu_name,
         'walker'      => new Custom_Sidebar_Menu_Walker(),
         'container'   => false,
         'items_wrap'  => '%3$s',   // بدون ul/li اضافی
         'depth'       => 1,        // فقط سطح اول
         'fallback_cb' => false,
-      ]);
+    ]);
     echo '</div>';
 }
 
@@ -1439,8 +1183,10 @@ function render_custom_sidebar_menu($menu_name = 'primary') {
 // Add the following to your theme's functions.php (e.g., rastgo/inc/functions/helper-functions.php)
 
 // Register the widget class
-class Rastgo_Sidebar_Menu_Widget extends WP_Widget {
-    public function __construct() {
+class Rastgo_Sidebar_Menu_Widget extends WP_Widget
+{
+    public function __construct()
+    {
         parent::__construct(
             'rastgo_sidebar_menu_widget',
             __('منوی سایدبار با SVG', 'rastgo'),
@@ -1449,57 +1195,59 @@ class Rastgo_Sidebar_Menu_Widget extends WP_Widget {
     }
 
     // Backend form with inline JS repeater
-    public function form($instance) {
+    public function form($instance)
+    {
         $items = !empty($instance['items']) ? $instance['items'] : [];
         ?>
         <div class="sidebar-widget-items">
             <p><button type="button" class="button add-sidebar-item"><?php _e('افزودن آیتم', 'rastgo'); ?></button></p>
             <div class="sidebar-items-container">
                 <?php foreach ($items as $item): ?>
-                <div class="sidebar-item-row">
-                    <p><label><?php _e('عنوان:', 'rastgo'); ?><br>
-                        <input class="widefat" name="<?php echo esc_attr($this->get_field_name('titles')); ?>[]" type="text" value="<?php echo esc_attr($item['title']); ?>">
-                    </label></p>
-                    <p><label><?php _e('لینک:', 'rastgo'); ?><br>
-                        <input class="widefat" name="<?php echo esc_attr($this->get_field_name('urls')); ?>[]" type="url" value="<?php echo esc_attr($item['url']); ?>">
-                    </label></p>
-                    <p><label><?php _e('SVG:', 'rastgo'); ?><br>
-                        <textarea class="widefat" name="<?php echo esc_attr($this->get_field_name('svgs')); ?>[]" rows="3"><?php echo esc_textarea($item['svg']); ?></textarea>
-                    </label></p>
-                    <p><button type="button" class="button remove-sidebar-item"><?php _e('حذف', 'rastgo'); ?></button></p>
-                    <hr>
-                </div>
+                    <div class="sidebar-item-row">
+                        <p><label><?php _e('عنوان:', 'rastgo'); ?><br>
+                                <input class="widefat" name="<?php echo esc_attr($this->get_field_name('titles')); ?>[]" type="text" value="<?php echo esc_attr($item['title']); ?>">
+                            </label></p>
+                        <p><label><?php _e('لینک:', 'rastgo'); ?><br>
+                                <input class="widefat" name="<?php echo esc_attr($this->get_field_name('urls')); ?>[]" type="url" value="<?php echo esc_attr($item['url']); ?>">
+                            </label></p>
+                        <p><label><?php _e('SVG:', 'rastgo'); ?><br>
+                                <textarea class="widefat" name="<?php echo esc_attr($this->get_field_name('svgs')); ?>[]" rows="3"><?php echo esc_textarea($item['svg']); ?></textarea>
+                            </label></p>
+                        <p><button type="button" class="button remove-sidebar-item"><?php _e('حذف', 'rastgo'); ?></button></p>
+                        <hr>
+                    </div>
                 <?php endforeach; ?>
             </div>
         </div>
         <script>
-        jQuery(document).ready(function($){
-            function newRow(){
-                return '<div class="sidebar-item-row">'
-                    + '<p><label><?php echo esc_js(__('عنوان:', 'rastgo')); ?><br>'
-                    + '<input class="widefat" name="<?php echo $this->get_field_name('titles'); ?>[]" type="text"></label></p>'
-                    + '<p><label><?php echo esc_js(__('لینک:', 'rastgo')); ?><br>'
-                    + '<input class="widefat" name="<?php echo $this->get_field_name('urls'); ?>[]" type="url"></label></p>'
-                    + '<p><label><?php echo esc_js(__('SVG:', 'rastgo')); ?><br>'
-                    + '<textarea class="widefat" name="<?php echo $this->get_field_name('svgs'); ?>[]" rows="3"></textarea></label></p>'
-                    + '<p><button type="button" class="button remove-sidebar-item"><?php echo esc_js(__('حذف', 'rastgo')); ?></button></p>'
-                    + '<hr></div>';
-            }
+            jQuery(document).ready(function($) {
+                function newRow() {
+                    return '<div class="sidebar-item-row">' +
+                        '<p><label><?php echo esc_js(__('عنوان:', 'rastgo')); ?><br>' +
+                        '<input class="widefat" name="<?php echo $this->get_field_name('titles'); ?>[]" type="text"></label></p>' +
+                        '<p><label><?php echo esc_js(__('لینک:', 'rastgo')); ?><br>' +
+                        '<input class="widefat" name="<?php echo $this->get_field_name('urls'); ?>[]" type="url"></label></p>' +
+                        '<p><label><?php echo esc_js(__('SVG:', 'rastgo')); ?><br>' +
+                        '<textarea class="widefat" name="<?php echo $this->get_field_name('svgs'); ?>[]" rows="3"></textarea></label></p>' +
+                        '<p><button type="button" class="button remove-sidebar-item"><?php echo esc_js(__('حذف', 'rastgo')); ?></button></p>' +
+                        '<hr></div>';
+                }
 
-            $('.add-sidebar-item').on('click', function(){
-                $(this).closest('.sidebar-widget-items').find('.sidebar-items-container').append(newRow());
-            });
+                $('.add-sidebar-item').on('click', function() {
+                    $(this).closest('.sidebar-widget-items').find('.sidebar-items-container').append(newRow());
+                });
 
-            $(document).on('click', '.remove-sidebar-item', function(){
-                $(this).closest('.sidebar-item-row').remove();
+                $(document).on('click', '.remove-sidebar-item', function() {
+                    $(this).closest('.sidebar-item-row').remove();
+                });
             });
-        });
         </script>
-        <?php
+    <?php
     }
 
     // Sanitize and save
-    public function update($new_instance, $old_instance) {
+    public function update($new_instance, $old_instance)
+    {
         $instance = ['items' => []];
         $titles = $new_instance['titles'] ?? [];
         $urls   = $new_instance['urls']   ?? [];
@@ -1511,9 +1259,9 @@ class Rastgo_Sidebar_Menu_Widget extends WP_Widget {
                     $svg_code = $svgs[$i];
                 } else {
                     $allowed_tags = [
-                        'svg'   => ['xmlns'=>true,'width'=>true,'height'=>true,'viewBox'=>true,'fill'=>true,'class'=>true],
-                        'path'  => ['d'=>true,'fill'=>true,'fill-rule'=>true,'clip-rule'=>true,'stroke'=>true,'stroke-width'=>true,'stroke-linecap'=>true,'stroke-linejoin'=>true],
-                        'circle'=> ['cx'=>true,'cy'=>true,'r'=>true,'fill'=>true,'stroke'=>true,'stroke-width'=>true],
+                        'svg'   => ['xmlns' => true, 'width' => true, 'height' => true, 'viewBox' => true, 'fill' => true, 'class' => true],
+                        'path'  => ['d' => true, 'fill' => true, 'fill-rule' => true, 'clip-rule' => true, 'stroke' => true, 'stroke-width' => true, 'stroke-linecap' => true, 'stroke-linejoin' => true],
+                        'circle' => ['cx' => true, 'cy' => true, 'r' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true],
                     ];
                     $svg_code = wp_kses($svgs[$i], $allowed_tags);
                 }
@@ -1529,7 +1277,8 @@ class Rastgo_Sidebar_Menu_Widget extends WP_Widget {
     }
 
     // Frontend display
-    public function widget($args, $instance) {
+    public function widget($args, $instance)
+    {
         $items = $instance['items'] ?? [];
         $current_url = untrailingslashit(home_url());
 
@@ -1547,19 +1296,21 @@ class Rastgo_Sidebar_Menu_Widget extends WP_Widget {
 }
 
 // Register widget on widgets_init
-function rastgo_register_sidebar_widget() {
+function rastgo_register_sidebar_widget()
+{
     register_widget('Rastgo_Sidebar_Menu_Widget');
 }
 add_action('widgets_init', 'rastgo_register_sidebar_widget');
 
 
 
-function rastgo_breadcrumb() {
+function rastgo_breadcrumb()
+{
     if (is_front_page()) return;
 
     $separator = '
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"
-            class="svg-icon me-4 mx-2">
+            class="svg-icon me-1 mx-2">
             <path d="M9 10.5848L8.409 11.25L3 6L8.409 0.75L9 1.41525L4.2765 6L9 10.5848Z" fill="currentColor" />
         </svg>';
 
@@ -1608,63 +1359,64 @@ function rastgo_breadcrumb() {
  *
  * @param string $theme_location Menu location identifier registered via register_nav_menus().
  */
-function rastgo_mobile_offcanvas_menu( $theme_location ) {
+function rastgo_mobile_offcanvas_menu($theme_location)
+{
     $locations = get_nav_menu_locations();
-    if ( empty( $locations[ $theme_location ] ) ) {
+    if (empty($locations[$theme_location])) {
         return;
     }
 
-    $menu_id    = $locations[ $theme_location ];
-    $menu_items = wp_get_nav_menu_items( $menu_id );
-    if ( empty( $menu_items ) ) {
+    $menu_id    = $locations[$theme_location];
+    $menu_items = wp_get_nav_menu_items($menu_id);
+    if (empty($menu_items)) {
         return;
     }
 
     // Build a tree of items: parent_id => [ items... ]
     $tree = [];
-    foreach ( $menu_items as $item ) {
-        $tree[ intval( $item->menu_item_parent ) ][] = $item;
+    foreach ($menu_items as $item) {
+        $tree[intval($item->menu_item_parent)][] = $item;
     }
 
     // Recursive renderer
-    $render_menu = function( $parent_id ) use ( &$render_menu, $tree ) {
-        if ( empty( $tree[ $parent_id ] ) ) {
+    $render_menu = function ($parent_id) use (&$render_menu, $tree) {
+        if (empty($tree[$parent_id])) {
             return '';
         }
 
         $html = '<div class="nav flex-column">';
-        foreach ( $tree[ $parent_id ] as $item ) {
-            $has_children = ! empty( $tree[ $item->ID ] );
+        foreach ($tree[$parent_id] as $item) {
+            $has_children = ! empty($tree[$item->ID]);
             $collapse_id  = 'submenu-' . $item->ID;
 
             // Container for one menu item
             $html .= '<div class="mobile-nav-item d-flex align-items-center mb-1">';
 
-                // 1. لینک منو
-                $html .= '<a href="' . esc_url( $item->url ) . '" class="mobile-nav-link">' 
-                      . esc_html( $item->title ) 
-                      . '</a>';
+            // 1. لینک منو
+            $html .= '<a href="' . esc_url($item->url) . '" class="mobile-nav-link">'
+                . esc_html($item->title)
+                . '</a>';
 
-                // 2. اگر زیرمنو دارد، کلید collapse
-                if ( $has_children ) {
-                    $html .= '<button class="btn p-0  toggle-submenu" type="button" '
-                           . 'data-bs-toggle="collapse" data-bs-target="#' . esc_attr( $collapse_id ) . '" '
-                           . 'aria-expanded="false" aria-controls="' . esc_attr( $collapse_id ) . '">'
-                           .   '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" '
-                           .   'fill="currentColor" class="svg-icon" viewBox="0 0 16 16">'
-                           .     '<path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293'
-                           .     'l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6'
-                           .     'a.5.5 0 0 1 0-.708z"/>'
-                           .   '</svg>'
-                           . '</button>';
-                }
+            // 2. اگر زیرمنو دارد، کلید collapse
+            if ($has_children) {
+                $html .= '<button class="btn p-0  toggle-submenu" type="button" '
+                    . 'data-bs-toggle="collapse" data-bs-target="#' . esc_attr($collapse_id) . '" '
+                    . 'aria-expanded="false" aria-controls="' . esc_attr($collapse_id) . '">'
+                    .   '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" '
+                    .   'fill="currentColor" class="svg-icon" viewBox="0 0 16 16">'
+                    .     '<path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293'
+                    .     'l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6'
+                    .     'a.5.5 0 0 1 0-.708z"/>'
+                    .   '</svg>'
+                    . '</button>';
+            }
 
             $html .= '</div>'; // .mobile-nav-item
 
             // زیرمنو
-            if ( $has_children ) {
-                $html .= '<div class="collapse ms-3" id="' . esc_attr( $collapse_id ) . '">';
-                $html .= $render_menu( $item->ID );
+            if ($has_children) {
+                $html .= '<div class="collapse ms-3" id="' . esc_attr($collapse_id) . '">';
+                $html .= $render_menu($item->ID);
                 $html .= '</div>';
             }
         }
@@ -1676,13 +1428,141 @@ function rastgo_mobile_offcanvas_menu( $theme_location ) {
     // Offcanvas wrapper
     ?>
     <div class="offcanvas offcanvas-end cs-offcanvas" tabindex="-1" id="offcanvasMobileNavs" aria-labelledby="offcanvasMobileNavsLabel">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasMobileNavsLabel"><?php esc_html_e( 'منوی سایت', 'yourtheme' ); ?></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="<?php esc_attr_e( 'Close', 'yourtheme' ); ?>"></button>
-      </div>
-      <div class="offcanvas-body">
-        <?php echo $render_menu( 0 ); ?>
-      </div>
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasMobileNavsLabel"><?php esc_html_e('منوی سایت', 'yourtheme'); ?></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="<?php esc_attr_e('Close', 'yourtheme'); ?>"></button>
+        </div>
+        <div class="offcanvas-body">
+            <?php echo $render_menu(0); ?>
+        </div>
     </div>
-    <?php
+<?php
+}
+
+// search form per get posts query filter 
+add_action('pre_get_posts', function($query) {
+    if ($query->is_main_query() && !is_admin() && $query->is_search()) {
+        $query->set('post_type', 'post');
+
+        require_once get_template_directory() . '/lib/jDateTime-master/jdatetime.class.php';
+
+        $tax_query = array();
+
+        // شبکه‌های اجتماعی
+        if (!empty($_GET['socials']) && is_array($_GET['socials'])) {
+            $tax_query[] = array(
+                'taxonomy' => 'social_network',
+                'field'    => 'term_id',
+                'terms'    => array_map('intval', $_GET['socials']),
+                'operator' => 'IN'
+            );
+        }
+
+        // ناشران
+        if (!empty($_GET['publishers']) && is_array($_GET['publishers'])) {
+            $tax_query[] = array(
+                'taxonomy' => 'rumor_source',
+                'field'    => 'term_id',
+                'terms'    => array_map('intval', $_GET['publishers']),
+                'operator' => 'IN'
+            );
+        }
+
+        // دسته‌بندی
+        if (!empty($_GET['cat'])) {
+            $tax_query[] = array(
+                'taxonomy' => 'category',
+                'field'    => 'term_id',
+                'terms'    => array(intval($_GET['cat'])),
+                'operator' => 'IN'
+            );
+        }
+
+        if (!empty($tax_query)) {
+            $query->set('tax_query', $tax_query);
+        }
+
+        // فیلتر تاریخ شمسی به میلادی
+        $date_query = array();
+        if (!empty($_GET['date_from'])) {
+            $date_from = str_replace(['/', '.'], '-', $_GET['date_from']);
+            list($jy, $jm, $jd) = explode('-', $date_from);
+            list($gy, $gm, $gd) = jDateTime::toGregorian($jy, $jm, $jd);
+            $date_query['after'] = array(
+                'year'  => $gy,
+                'month' => $gm,
+                'day'   => $gd,
+                'hour'  => 0,
+                'minute'=> 0,
+                'second'=> 0,
+            );
+            $date_query['inclusive'] = true;
+        }
+        if (!empty($_GET['date_to'])) {
+            $date_to = str_replace(['/', '.'], '-', $_GET['date_to']);
+            list($jy, $jm, $jd) = explode('-', $date_to);
+            list($gy, $gm, $gd) = jDateTime::toGregorian($jy, $jm, $jd);
+            $date_query['before'] = array(
+                'year'  => $gy,
+                'month' => $gm,
+                'day'   => $gd,
+                'hour'  => 23,
+                'minute'=> 59,
+                'second'=> 59,
+            );
+            $date_query['inclusive'] = true;
+        }
+        if (!empty($date_query)) {
+            $query->set('date_query', array($date_query));
+        }
+
+        // فیلتر نتیجه بررسی (review_result)
+        if (!empty($_GET['review_result'])) {
+            $meta_query = $query->get('meta_query') ?: array();
+            $meta_query[] = array(
+                'key'     => 'i8_fact_result',
+                'value'   => $_GET['review_result'],
+                'compare' => '='
+            );
+            $query->set('meta_query', $meta_query);
+        }
+    }
+});
+
+
+
+
+
+/**
+ * افزودن فیلد لوگو به بخش هویت سایت در شخصی‌سازی قالب
+ */
+function my_custom_logo_customizer( $wp_customize ) {
+    // افزودن تنظیمات برای لوگو
+    $wp_customize->add_setting( 'site_logo', array(
+        'type'       => 'theme_mod', // ذخیره به عنوان theme modification
+        'capability' => 'edit_theme_options', // قابلیت ویرایش
+        'default'    => '', // مقدار پیش‌فرض
+        'transport'  => 'refresh', // رفرش صفحه پس از تغییر
+    ) );
+
+    // افزودن کنترل (فیلد آپلود تصویر) برای لوگو
+    $wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'site_logo', array(
+        'label'    => __( 'لوگوی سایت', 'text-domain' ), // لیبل فیلد
+        'section'  => 'title_tagline', // بخش "هویت سایت"
+        'settings' => 'site_logo', // نام تنظیمات
+        'priority' => 8, // اولویت نمایش فیلد (بالاتر از فیلد لوگوی پیش‌فرض وردپرس)
+    ) ) );
+}
+add_action( 'customize_register', 'my_custom_logo_customizer' );
+
+/**
+ * نمایش لوگوی سایت
+ */
+function get_my_site_logo() {
+    $logo_url = get_theme_mod( 'site_logo' );
+    if ( $logo_url ) {
+        echo '<a href="' . esc_url( home_url( '/' ) ) . '"><img class="header-logo-img img-fluid" src="' . esc_url( $logo_url ) . '" alt="' . esc_attr( get_bloginfo( 'name' ) ) . '"></a></h1>';
+    } else {
+        echo '<h1><a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html( get_bloginfo( 'name' ) ) . '</a></h1>';
+    }
 }

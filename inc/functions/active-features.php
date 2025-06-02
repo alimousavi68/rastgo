@@ -12,6 +12,7 @@ function i8_theme_setup()
 {
     register_nav_menus(array(
         'primary' => __('Main Menu'),
+        'sidebar'  => __('sidebar menu'),
         'mobile'  => __('Mobile menu'),
         'footer'  => __('footer menu')
     ));

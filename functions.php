@@ -61,6 +61,8 @@ add_filter('excerpt_length', 'custom_excerpt_length');
  */
 require_once(get_template_directory() . '/inc/functions/i8_CustomTermField.php');
 
+require_once(get_template_directory() . '/inc/functions/factcheck_metabox.php');
+
 
 // //Include jalali-date external library 
 // require_once(get_template_directory() . '/lib/jDateTime-master/jdatetime.class.php');
@@ -76,6 +78,60 @@ require_once(get_template_directory() . '/inc/functions/i8_CustomTermField.php')
 if (!function_exists('download_url')) {
     require_once ABSPATH . 'wp-admin/includes/file.php';
 }
+
+/**
+ * Add ClaimReview Schema to single posts.
+ */
+function rastgo_add_factcheck_schema() {
+    if (is_single()) {
+        global $post;
+
+        $fact_summary = get_post_meta($post->ID, 'i8_fact_summary', true);
+        $fact_result = get_post_meta($post->ID, 'i8_fact_result', true);
+        $fact_result_summary = get_post_meta($post->ID, 'i8_fact_result_summary', true);
+
+        if (!empty($fact_summary) && !empty($fact_result) && !empty($fact_result_summary)) {
+            $rating_value = '';
+            switch ($fact_result) {
+                case 'true':
+                    $rating_value = 'True';
+                    break;
+                case 'false':
+                    $rating_value = 'False';
+                    break;
+                case 'halftrue':
+                    $rating_value = 'PartiallyTrue';
+                    break;
+            }
+
+            if (!empty($rating_value)) {
+                $schema = [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'ClaimReview',
+                    'datePublished' => get_the_date('c', $post->ID),
+                    'url' => get_permalink($post->ID),
+                    'itemReviewed' => [
+                        '@type' => 'Claim',
+                        'claimReviewed' => $fact_summary,
+                    ],
+                    'author' => [
+                        '@type' => 'Organization',
+                        'name' => get_bloginfo('name'),
+                        'url' => home_url(),
+                    ],
+                    'reviewRating' => [
+                        '@type' => 'Rating',
+                        'ratingValue' => $rating_value,
+                        'alternateName' => $fact_result_summary,
+                    ],
+                ];
+
+                echo '<script type="application/ld+json">' . json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
+            }
+        }
+    }
+}
+add_action('wp_head', 'rastgo_add_factcheck_schema');
 
 
 // $document_root = $_SERVER['DOCUMENT_ROOT'] . '/rasadi';

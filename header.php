@@ -87,12 +87,7 @@
     <header class="header overflow-hidden">
         <div class="header-container d-flex align-items-stretch mx-auto justify-content-between">
             <div class="header-logo d-flex align-items-center">
-                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/header-logo.jpg" class="header-logo-img img-fluid" alt="">
-                <a href="<?php echo esc_url(home_url('/')); ?>">
-                    <h2 class="header-logo-title m-0">
-                        <?php bloginfo('title'); ?>
-                    </h2>
-                </a>
+                <?php get_my_site_logo(); ?>
             </div>
 
             <div class="header-left-box d-flex align-items-center overflow-hidden">

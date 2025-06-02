@@ -10,12 +10,14 @@ get_header();
     <div class="container">
         <div class="row align-items-start position-relative">
 
+
             <!-- Aside Section -->
             <div class="d-none d-lg-block col-lg-3 col-xl-2 col-xxl-auto position-sticky top-16">
                 <aside class="sidebar pb-5">
                     <div class="sidebar-search-box">
-                        <form action="" method="" class="search-form">
-                            <input type="text" class="form-control cs-inp mb-2" id="" placeholder=" جستجوی کلمه...">
+                        <form action="<?php echo esc_url(home_url('/')); ?>" method="get" class="search-form">
+                            <input type="text" name="s" class="form-control cs-inp mb-2" id="" placeholder=" جستجوی کلمه..." value="<?php echo get_search_query(); ?>">
+
                             <span class="d-block form-title mb-1">
                                 از:
                             </span>
@@ -40,7 +42,9 @@ get_header();
                                         </clipPath>
                                     </defs>
                                 </svg>
-                                <input type="text" placeholder="تاریخ" class="usage cs-date-inp form-control" />
+                                <input type="text" name="date_from" placeholder="تاریخ"
+                                    class="usage cs-date-inp form-control"
+                                    value="<?php echo isset($_GET['date_from']) ? esc_attr($_GET['date_from']) : ''; ?>" />
                             </div>
 
                             <span class="d-block form-title mb-1">
@@ -67,72 +71,69 @@ get_header();
                                         </clipPath>
                                     </defs>
                                 </svg>
-                                <input type="text" placeholder="تاریخ" class="usage cs-date-inp form-control" />
+                                <input type="text" name="date_to" placeholder="تاریخ"
+                                    class="usage cs-date-inp form-control"
+                                    value="<?php echo isset($_GET['date_to']) ? esc_attr($_GET['date_to']) : ''; ?>" />
                             </div>
 
-                            <span class="d-block form-title mb-2">
-                                موضوع:
-                            </span>
 
-                            <select class="form-select cs-select-inp mb-2" aria-label="">
-                                <option selected>انتخاب موضوع</option>
-                                <option value="1">اول</option>
-                                <option value="2">دوم</option>
-                                <option value="3">سوم</option>
+                            <span class="d-block form-title mb-2">موضوع:</span>
+                            <select class="form-select cs-select-inp mb-2" name="cat" aria-label="">
+                                <option value="">انتخاب موضوع</option>
+                                <?php
+                                $selected_cat = get_query_var('cat');
+                                $categories = get_categories(['hide_empty' => false]);
+                                foreach ($categories as $cat) {
+                                    echo '<option value="' . esc_attr($cat->term_id) . '" ' . selected($selected_cat, $cat->term_id, false) . '>' . esc_html($cat->name) . '</option>';
+                                }
+                                ?>
                             </select>
 
-                            <span class="d-block form-title mb-1">
-                                ناشران:
-                            </span>
-
-                            <!-- <select class="js-example-basic-single js-select2-01" name="state">
-                                    <option value="AL">Alabama</option>
-                                    <option value="WY">Wyoming</option>
-                                </select> -->
+                            <span class="d-block form-title mb-1">ناشران:</span>
                             <div class="mb-2 overflow-hidden js-select2-box">
-                                <select class="js-states form-control js-select2-01" id="" multiple="multiple"
-                                    name="states[]">
-                                    <option value="AL">ناشر1</option>
-                                    <option value="AL2">ناشر2</option>
+                                <?php
+                                $selected_publishers = isset($_GET['publishers']) ? (array) $_GET['publishers'] : array();
+                                ?>
+                                <select class="js-states form-control js-select2-01" name="publishers[]" multiple="multiple">
+                                    <?php
+                                    $publishers = get_terms(['taxonomy' => 'rumor_source', 'hide_empty' => false]);
+                                    foreach ($publishers as $publisher) {
+                                        $selected = in_array($publisher->term_id, $selected_publishers) ? 'selected' : '';
+                                        echo '<option value="' . esc_attr($publisher->term_id) . '" ' . $selected . '>' . esc_html($publisher->name) . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <!-- Result filter dropdown moved outside publishers select -->
+                            <span class="d-block form-title mb-2">نتیجه بررسی:</span>
+                            <div class="mb-2 overflow-hidden js-select2-box">
+                                <?php
+                                    if (isset($_GET['review_result'])) {
+                                        $review_result = $_GET['review_result'];
+                                    }
+                                    ?>
+                                <select class="form-select cs-select-inp mb-2" name="review_result" aria-label="">
+                                    <option value="">انتخاب نتیجه</option>
+                                    <option value="true" <?php  if (isset($_GET['review_result'])) { selected($review_result, 'true');} ?> >درست</option>
+                                    <option value="false" <?php  if (isset($_GET['review_result'])) {  selected($review_result, 'false');} ?> >نادرست</option>
+                                    <option value="halftrue" <?php  if (isset($_GET['review_result'])) {  selected($review_result, 'halftrue');} ?> >نیمه درست</option>
                                 </select>
                             </div>
 
-                            <!-- <select class="form-select cs-select-inp mb-2" aria-label="">
-                                    <option selected>انتخاب ناشر</option>
-                                    <option value="1">اول</option>
-                                    <option value="2">دوم</option>
-                                    <option value="3">سوم</option>
-                                </select> -->
-
-                            <span class="d-block form-title mb-2">
-                                نتیجه بررسی:
-                            </span>
-                            <select class="form-select cs-select-inp mb-2" aria-label="">
-                                <option selected>انتخاب نتیجه</option>
-                                <option value="1">اول</option>
-                                <option value="2">دوم</option>
-                                <option value="3">سوم</option>
-                            </select>
-
-                            <span class="d-block form-title mb-2">
-                                شبکه های اجتماعی:
-                            </span>
+                            <span class="d-block form-title mb-2">شبکه های اجتماعی:</span>
                             <div class="mb-2 overflow-hidden js-select2-box">
-                                <select class="js-states form-control js-select2-01" id="" multiple="multiple"
-                                    name="states[]">
-                                    <option value="AL">شبکه1</option>
-                                    <option value="AL2">شبکه2</option>
+                                <select class="js-states form-control js-select2-01" name="socials[]" multiple="multiple">
+                                    <?php
+                                    $selected_socials = isset($_GET['socials']) ? array_map('intval', $_GET['socials']) : array();
+                                    $socials = get_terms(['taxonomy' => 'social_network', 'hide_empty' => false]);
+                                    foreach ($socials as $social) {
+                                        echo '<option value="' . esc_attr($social->term_id) . '" ' . (in_array($social->term_id, $selected_socials) ? 'selected' : '') . '>' . esc_html($social->name) . '</option>';
+                                    }
+                                    ?>
                                 </select>
                             </div>
-                            <!-- <select class="form-select cs-select-inp mb-3" aria-label="">
-                                    <option selected>انتخاب شبکه</option>
-                                    <option value="1">اول</option>
-                                    <option value="2">دوم</option>
-                                    <option value="3">سوم</option>
-                                </select> -->
 
-                            <button
-                                class="btn cs-submit-btn d-flex w-100 align-items-center justify-content-center">
+                            <button class="btn cs-submit-btn d-flex w-100 align-items-center justify-content-center">
                                 فیلتر
                             </button>
                         </form>
@@ -140,6 +141,7 @@ get_header();
                 </aside>
             </div>
             <!-- END Aside Section -->
+
 
             <!-- Article List Section -->
             <div class="col-lg-9 col-xl-10 col-xxl-9">
@@ -157,12 +159,6 @@ get_header();
                                         <?php echo i8_the_thumbnail('medium', 'article-img w-100 h-100 object-cover', $size = array('width' => '', 'height' => ''), true, '', false, true) ?>
                                     </a>
                                     <div class="article-content">
-                                        <span class="article-tag">
-                                            <?php
-                                            $category = get_the_category();
-                                            echo $category ? esc_html($category[0]->name) : '';
-                                            ?>
-                                        </span>
                                         <div class="article-time">
                                             <?php
                                             echo 'منتشر شده در ';

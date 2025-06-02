@@ -32,8 +32,13 @@
 
     <div class="container p-3 ">
       <div class="row d-flex text-center text-lg-end text-md-end text-sm-center row-gap-3 flex-wrap-reverse">
-        <span class="col-12 col-lg-10 col-md-10 col-sm-12 ">تمامی حقوق مادی و معنوی این وبسایت متعلق به پایگاه خبری
-          تحلیلی ببین و بخون می باشد و هرگونه کپی برداری با ذکر منبع بلامانع است.</span>
+        <span class="col-12 col-lg-10 col-md-10 col-sm-12 ">
+        <?php
+          $copyright_text = rastgo_get_copyright_text();
+          echo $copyright_text ? $copyright_text : 'تمامی حقوق این سایت محفوظ است.';
+        ?>
+
+        </span>
         <div class="col-12 col-lg-2 col-sm-12 col-md-2">
           <div
             class="d-xl-flex d-lg-flex d-md-flex justify-content-center gap-2 social-links justify-content-center align-items-center">
@@ -147,7 +152,7 @@
     cursor: pointer;
     display: block;
     border-radius: 50px;
-    box-shadow: inset 0 0 0 2px #c4c4c482;
+    box-shadow: inset 0 0 0 2px #325aff;
     z-index: 10000;
     opacity: 0;
     visibility: hidden;
@@ -165,7 +170,7 @@
 
   .progress-wrap::after {
     position: absolute;
-    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="orange" class="bi bi-arrow-up-short" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5"/></svg>');
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="blue" class="bi bi-arrow-up-short" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5"/></svg>');
     text-align: center;
     line-height: 46px;
     font-size: 20px;
@@ -187,7 +192,7 @@
 
   .progress-wrap::before {
     position: absolute;
-    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="orange" class="bi bi-arrow-up-short" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5"/></svg>');
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="blue" class="bi bi-arrow-up-short" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5"/></svg>');
     text-align: center;
     line-height: 46px;
     font-size: 20px;

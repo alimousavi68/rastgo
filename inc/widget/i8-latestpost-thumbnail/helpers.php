@@ -15,8 +15,8 @@ function i8_get_latest_posts($category, $count, $include_editors = false, $edito
         // گرفتن پست‌های انتخاب سردبیر
         $editors_args = $args;
         $editors_args['posts_per_page'] = $editors_count;
-        $editors_args['meta_key'] = 'editor_choice';
-        $editors_args['meta_value'] = 'true';
+        $editors_args['meta_key'] = 'i8_editor_choice';
+        $editors_args['meta_value'] = 1;
         $editors_args['meta_compare'] = '=';
 
         $editors_posts = get_posts($editors_args);

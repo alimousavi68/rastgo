@@ -2,7 +2,7 @@
 function i8_render_latest_posts($instance)
 {
     $category = $instance['category'] ?? 'all';
-    $count = $instance['count'] ?? 6;
+    $count = $instance['count'] ?? 9;
     $sticky = $instance['sticky_editors'] ?? 0;
     $sticky_count = $instance['sticky_editors_count'] ?? 2;
 
@@ -14,9 +14,9 @@ function i8_render_latest_posts($instance)
         ?>
 
             <div class="col-md-6 col-xl-4">
-                <article class="article-item position-relative overflow-hidden <?php $x = get_post_meta($item->ID, 'editor_choice', true);
-                                                                                echo get_post_meta($item->ID, 'editor_choice', true) == 'true' ? 'article-pin-active' : ''; ?>">
-                    <?php if (get_post_meta($item->ID, 'editor_choice', true) == 'true'): ?>
+                <article class="article-item position-relative overflow-hidden <?php $x = get_post_meta($item->ID, 'i8_editor_choice', true);
+                                                                                echo get_post_meta($item->ID, 'i8_editor_choice', true) == 1 ? 'article-pin-active' : ''; ?>">
+                    <?php if (get_post_meta($item->ID, 'i8_editor_choice', true) == 1): ?>
                         <span class="article-pin position-absolute top-0 right-0">انتخاب سردبیران</span>
                     <?php endif; ?>
 
@@ -26,12 +26,15 @@ function i8_render_latest_posts($instance)
                     </a>
 
                     <div class="article-content">
-                        <span class="article-tag">
-                            <?php
-                            $category = get_the_category($item->ID);
-                            echo $category ? esc_html($category[0]->name) : '';
+                        <?php
+                            $post_category = get_post_meta( $item->ID, 'i8_primary_category',true );
+                            if ( $post_category ) {
+                                $category = get_category( $post_category );
+                                if ( $category ) {
+                                    echo '<span class="article-tag">' . esc_html( $category->name ) . '</span>';
+                                }
+                            } 
                             ?>
-                        </span>
                         <div class="article-time">
                             منتشر شده در <?php echo get_the_date('Y/m/d', $item->ID) ?> ساعت <?php
                                                                                                 echo get_the_date('H:i',  $item->ID); ?>

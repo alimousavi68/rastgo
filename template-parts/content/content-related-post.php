@@ -23,6 +23,7 @@ $args = array(
 
 // اجرای پرس و جو برای بازیابی خبرهای مرتبط
 $related_posts = new WP_Query($args);
+if ($related_posts->have_posts()) :
 ?>
 
 <section class="offers-post-section mb-5">
@@ -35,7 +36,7 @@ $related_posts = new WP_Query($args);
             </div>
             <?php
             // نمایش خبرهای مرتبط
-            if ($related_posts->have_posts()) {
+            
                 while ($related_posts->have_posts()) {
                     $related_posts->the_post();
             ?>
@@ -73,7 +74,7 @@ $related_posts = new WP_Query($args);
 
             <?php
                 }
-            }
+            
             // بازنشانی پست فعلی
             wp_reset_postdata();
             ?>
@@ -83,5 +84,6 @@ $related_posts = new WP_Query($args);
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 <?php
