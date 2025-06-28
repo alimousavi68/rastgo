@@ -5,6 +5,7 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 @import '../css/custom-style.css';
+@import '../css/select2.min.css';
 :root,
 [data-bs-theme=light] {
   --bs-blue: #0d6efd;

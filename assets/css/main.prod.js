@@ -1,1 +1,1 @@
-"use strict";
+"use strict";document.addEventListener("DOMContentLoaded",function(){console.log("main.js loaded");[].slice.call(document.querySelectorAll(".offcanvas")).map(function(e){return new bootstrap.Offcanvas(e,{backdrop:!0})})});

@@ -54,7 +54,7 @@ function i8_render_latest_posts($instance)
 
     </div>
     <div class="col-12 text-center pt-4">
-        <a href="#" class="article-more">
+        <a href="<?php echo get_site_url(); ?>/page/2/?s" class="article-more">
             نمایش بیشتر
           </a>
     </div>

@@ -735,7 +735,7 @@ function custom_lightbox_gallery()
 
         if (has_shortcode($post->post_content, 'gallery')) {
     ?>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+            
             <style>
                 :root {
                     --lightbox: rgb(0 0 0 / 0.75);
@@ -1427,7 +1427,7 @@ function rastgo_mobile_offcanvas_menu($theme_location)
 
     // Offcanvas wrapper
     ?>
-    <div class="offcanvas offcanvas-end cs-offcanvas" tabindex="-1" id="offcanvasMobileNavs" aria-labelledby="offcanvasMobileNavsLabel">
+    <div class="offcanvas offcanvas-end cs-offcanvas" tabindex="-1" id="offcanvasMobileNavs" aria-labelledby="offcanvasMobileNavsLabel" data-bs-backdrop="true">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="offcanvasMobileNavsLabel"><?php esc_html_e('منوی سایت', 'yourtheme'); ?></h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="<?php esc_attr_e('Close', 'yourtheme'); ?>"></button>

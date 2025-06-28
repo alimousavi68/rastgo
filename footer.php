@@ -3,8 +3,13 @@
 ?>
 
 
-<footer class="footer px-3 px-lg-0">
-  <div class="footer-container mx-auto">
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
+<footer class="footer"> px-3 px-lg-0">
+  <div class="footer-container mx-auto mb-4">
     <div class="container">
       <div class="row">
 
@@ -28,18 +33,18 @@
     </div>
   </div>
   <!-- footer menu -->
-  <div class="col-12 bottom-menu pt-2 pb-5">
+  <div class="col-12 bottom-menu pt-2">
 
     <div class="container p-3 ">
       <div class="row d-flex text-center text-lg-end text-md-end text-sm-center row-gap-3 flex-wrap-reverse">
-        <span class="col-12 col-lg-10 col-md-10 col-sm-12 ">
+        <span class="col-12 col-lg-10 col-md-10 col-sm-12 fs-14">
         <?php
           $copyright_text = rastgo_get_copyright_text();
           echo $copyright_text ? $copyright_text : 'تمامی حقوق این سایت محفوظ است.';
         ?>
 
         </span>
-        <div class="col-12 col-lg-2 col-sm-12 col-md-2">
+        <div class="col-12 col-lg-2 col-sm-12 col-md-2 fs-14">
           <div
             class="d-xl-flex d-lg-flex d-md-flex justify-content-center gap-2 social-links justify-content-center align-items-center">
             <span class="">طراحی و تولید: <a href="https://ihasht.ir/" class="text-white i8-blink" title="هشت بهشت"
@@ -244,9 +249,26 @@
 <script>
   (function($) {
     // Change Theme Button
-    jQuery("#themeSwitch").on("click", function() {
-      jQuery(this).toggleClass("switch-active");
-      jQuery("html").toggleClass("dark-theme");
+    jQuery(document).ready(function() {
+      // بازیابی وضعیت تم از localStorage
+      if (localStorage.getItem("theme") === "dark") {
+        jQuery("html").addClass("dark-theme");
+        jQuery("#themeSwitch").addClass("switch-active");
+      } else {
+        jQuery("html").removeClass("dark-theme");
+        jQuery("#themeSwitch").removeClass("switch-active");
+      }
+
+      // دکمه تغییر تم
+      jQuery("#themeSwitch").on("click", function() {
+        jQuery(this).toggleClass("switch-active");
+        jQuery("html").toggleClass("dark-theme");
+        if (jQuery("html").hasClass("dark-theme")) {
+          localStorage.setItem("theme", "dark");
+        } else {
+          localStorage.setItem("theme", "light");
+        }
+      });
     });
 
     // Breadcrumb Action 
@@ -285,7 +307,11 @@
     });
 
     jQuery(".usage").persianDatepicker();
-    jQuery('.js-select2-01').select2();
+
+    // Select2 initialization moved inside document.ready
+    jQuery(document).ready(function() {
+      jQuery('.js-select2-01').select2();
+    });
 
   })(jQuery);
 </script>

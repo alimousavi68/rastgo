@@ -1,4 +1,4 @@
-  <?php
+<?php
 class I8_LatestPost_Thumbnail_Widget extends WP_Widget {
 
     public function __construct() {

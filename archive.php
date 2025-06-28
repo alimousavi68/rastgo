@@ -156,7 +156,7 @@ get_header();
                             <div class="col-md-6 col-xl-4">
                                 <article class="article-item position-relative overflow-hidden">
                                     <a href="<?php the_permalink(); ?>" class="article-img-box d-block position-relative overflow-hidden">
-                                        <?php echo i8_the_thumbnail('medium', 'article-img w-100 h-100 object-cover', $size = array('width' => '', 'height' => ''), true, '', false, true) ?>
+                                        <?php echo i8_the_thumbnail('i8-md-image', 'article-img w-100 h-100 object-cover', $size = array('width' => '', 'height' => ''), true, '', false, true) ?>
                                     </a>
                                     <div class="article-content">
                                         <div class="article-time">

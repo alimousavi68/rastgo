@@ -4,26 +4,14 @@ class Latest_Posts_latestpost_overlay_widget extends WP_Widget {
     public function __construct() {
         parent::__construct(
             'latest_posts_latestpost_overlay_widget',
-            'ویجت پست‌های دلخواه (سفارشی)',
-            array('description' => 'نمایش پست‌های یک دسته خاص در قالب سفارشی')
+            'ویجت برگه های دلخواه (سفارشی)',
+            array('description' => 'نمایش برگه ها در قالب سفارشی')
         );
     }
 
     public function widget($args, $instance) {
         $title = apply_filters('widget_title', $instance['title']);
-        $count = !empty($instance['count']) ? absint($instance['count']) : 4;
-        $category = !empty($instance['category']) ? absint($instance['category']) : 0;
-
-        $query_args = array(
-            'post_type' => 'post',
-            'posts_per_page' => $count,
-        );
-
-        if ($category) {
-            $query_args['cat'] = $category;
-        }
-
-        $query = new WP_Query($query_args);
+        $selected_pages = !empty($instance['pages']) ? (array)$instance['pages'] : array();
 
         echo '<div class="row latest-post-2">';
 
@@ -31,20 +19,20 @@ class Latest_Posts_latestpost_overlay_widget extends WP_Widget {
             echo '<div class="col-12"><h4 class="text-center main-title">' . esc_html($title) . '</h4></div>';
         }
 
-        if ($query->have_posts()) {
-            while ($query->have_posts()) {
-                $query->the_post();
-                $image_url = get_the_post_thumbnail_url(get_the_ID(), 'medium') ?: 'https://via.placeholder.com/300x200?text=No+Image';
+        if (!empty($selected_pages)) {
+            foreach ($selected_pages as $page_id) {
+                $page = get_post($page_id);
+                if (!$page) continue;
+                $image_url = get_the_post_thumbnail_url($page_id, 'medium') ?: 'https://via.placeholder.com/300x200?text=No+Image';
 
                 echo '<div class="col-md-6 col-lg-3">';
-                echo '<a href="' . esc_url(get_permalink()) . '" class="about-box d-block overflow-hidden position-relative">';
-                echo '<img src="' . esc_url($image_url) . '" class="about-box-img w-100 h-100 object-cover" alt="' . esc_attr(get_the_title()) . '">';
-                echo '<h5 class="about-box-title position-absolute overflow-hidden m-0">' . esc_html(get_the_title()) . '</h5>';
+                echo '<a href="' . esc_url(get_permalink($page_id)) . '" class="about-box d-block overflow-hidden position-relative">';
+                echo '<img src="' . esc_url($image_url) . '" class="about-box-img w-100 h-100 object-cover" alt="' . esc_attr($page->post_title) . '">';
+                echo '<h5 class="about-box-title position-absolute overflow-hidden m-0">' . esc_html($page->post_title) . '</h5>';
                 echo '</a></div>';
             }
-            wp_reset_postdata();
         } else {
-            echo '<div class="col-12 text-center">پستی یافت نشد.</div>';
+            echo '<div class="col-12 text-center">برگه‌ای انتخاب نشده است.</div>';
         }
 
         echo '</div>';
@@ -52,9 +40,10 @@ class Latest_Posts_latestpost_overlay_widget extends WP_Widget {
 
     public function form($instance) {
         $title = !empty($instance['title']) ? $instance['title'] : 'عنوان بخش';
-        $count = !empty($instance['count']) ? $instance['count'] : 4;
-        $category = !empty($instance['category']) ? $instance['category'] : 0;
-        $categories = get_categories(array('hide_empty' => false));
+        $selected_pages = !empty($instance['pages']) ? (array)$instance['pages'] : array();
+
+        // Get all pages
+        $pages = get_pages(array('sort_column' => 'post_title', 'sort_order' => 'asc'));
         ?>
         <p>
             <label for="<?php echo $this->get_field_id('title'); ?>">عنوان:</label>
@@ -63,33 +52,25 @@ class Latest_Posts_latestpost_overlay_widget extends WP_Widget {
                 value="<?php echo esc_attr($title); ?>">
         </p>
         <p>
-            <label for="<?php echo $this->get_field_id('count'); ?>">تعداد پست‌ها:</label>
-            <input class="tiny-text" id="<?php echo $this->get_field_id('count'); ?>" 
-                name="<?php echo $this->get_field_name('count'); ?>" type="number" 
-                step="1" min="1" value="<?php echo esc_attr($count); ?>" size="3">
-        </p>
-        <p>
-            <label for="<?php echo $this->get_field_id('category'); ?>">دسته‌بندی:</label>
-            <select class="widefat" id="<?php echo $this->get_field_id('category'); ?>" 
-                name="<?php echo $this->get_field_name('category'); ?>">
-                <option value="0" <?php selected($category, 0); ?>>همه دسته‌ها</option>
-                <?php foreach ($categories as $cat) : ?>
-                    <option value="<?php echo $cat->term_id; ?>" 
-                        <?php selected($category, $cat->term_id); ?>>
-                        <?php echo esc_html($cat->name); ?>
+            <label for="<?php echo $this->get_field_id('pages'); ?>">انتخاب برگه‌ها:</label>
+            <select class="widefat" id="<?php echo $this->get_field_id('pages'); ?>[]" 
+                name="<?php echo $this->get_field_name('pages'); ?>[]" multiple size="6">
+                <?php foreach ($pages as $page): ?>
+                    <option value="<?php echo $page->ID; ?>" <?php echo in_array($page->ID, $selected_pages) ? 'selected' : ''; ?>>
+                        <?php echo esc_html($page->post_title); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
+            <small>برای انتخاب چند برگه کلید Ctrl (یا Cmd در مک) را نگه دارید.</small>
         </p>
         <?php
     }
 
     public function update($new_instance, $old_instance) {
-        return array(
-            'title'    => sanitize_text_field($new_instance['title']),
-            'count'    => absint($new_instance['count']),
-            'category' => absint($new_instance['category']),
-        );
+        $instance = array();
+        $instance['title'] = sanitize_text_field($new_instance['title']);
+        $instance['pages'] = array_map('absint', (array)($new_instance['pages'] ?? []));
+        return $instance;
     }
 }
 

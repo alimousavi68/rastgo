@@ -23,7 +23,10 @@ require_once(get_template_directory() . '/inc/widget/i8_menu.php');
 require_once get_template_directory() . '/inc/widget/i8-latestpost-thumbnail/init.php';
 require_once get_template_directory() . '/inc/widget/i8-latestpost-overlay/index.php';
 
-
+/**
+ * Include simple_html_dom library
+ */
+require_once get_template_directory() . '/lib/simple_html_dom.php';
 
 
 /**
@@ -67,213 +70,63 @@ require_once(get_template_directory() . '/inc/functions/factcheck_metabox.php');
 // //Include jalali-date external library 
 // require_once(get_template_directory() . '/lib/jDateTime-master/jdatetime.class.php');
 
-
-
-
-
-
-
-
-// Check if download_url function is available, otherwise include the necessary file
-if (!function_exists('download_url')) {
-    require_once ABSPATH . 'wp-admin/includes/file.php';
+/**
+ * Enqueue scripts and styles.
+ */
+function rastgo_enqueue_scripts() {
+    wp_enqueue_script('bootstrap-bundle', get_template_directory_uri() . '/assets/js/bootstrap.bundle.min.js', array(), '5.3.1.1', true);
+    wp_enqueue_script('rastgo-main', get_template_directory_uri() . '/assets/js/main.js', array('bootstrap-bundle'), '1.0.0', true);
 }
+add_action('wp_enqueue_scripts', 'rastgo_enqueue_scripts');
 
 /**
- * Add ClaimReview Schema to single posts.
+ * Custom Walker for Bootstrap 5 Nav Menu
  */
-function rastgo_add_factcheck_schema() {
-    if (is_single()) {
-        global $post;
+class Bootstrap_5_Walker_Nav_Menu extends Walker_Nav_Menu {
+    function start_lvl(&$output, $depth = 0, $args = null) {
+        $indent = str_repeat("\t", $depth);
+        $output .= "\n$indent<ul class=\"dropdown-menu\">\n";
+    }
 
-        $fact_summary = get_post_meta($post->ID, 'i8_fact_summary', true);
-        $fact_result = get_post_meta($post->ID, 'i8_fact_result', true);
-        $fact_result_summary = get_post_meta($post->ID, 'i8_fact_result_summary', true);
+    function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
+        $indent = ($depth) ? str_repeat("\t", $depth) : '';
 
-        if (!empty($fact_summary) && !empty($fact_result) && !empty($fact_result_summary)) {
-            $rating_value = '';
-            switch ($fact_result) {
-                case 'true':
-                    $rating_value = 'True';
-                    break;
-                case 'false':
-                    $rating_value = 'False';
-                    break;
-                case 'halftrue':
-                    $rating_value = 'PartiallyTrue';
-                    break;
-            }
+        $li_attributes = '';
+        $class_names = $value = '';
 
-            if (!empty($rating_value)) {
-                $schema = [
-                    '@context' => 'https://schema.org',
-                    '@type' => 'ClaimReview',
-                    'datePublished' => get_the_date('c', $post->ID),
-                    'url' => get_permalink($post->ID),
-                    'itemReviewed' => [
-                        '@type' => 'Claim',
-                        'claimReviewed' => $fact_summary,
-                    ],
-                    'author' => [
-                        '@type' => 'Organization',
-                        'name' => get_bloginfo('name'),
-                        'url' => home_url(),
-                    ],
-                    'reviewRating' => [
-                        '@type' => 'Rating',
-                        'ratingValue' => $rating_value,
-                        'alternateName' => $fact_result_summary,
-                    ],
-                ];
+        $classes = empty($item->classes) ? array() : (array) $item->classes;
 
-                echo '<script type="application/ld+json">' . json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
-            }
+        $classes[] = 'nav-item';
+        if ($args->walker->has_children) {
+            $classes[] = 'dropdown';
         }
+        if ($item->current || $item->current_item_ancestor || $item->current_item_parent) {
+            $classes[] = 'active';
+        }
+        $class_names =  join(' ', apply_filters('nav_menu_css_class', array_filter($classes), $item, $args));
+        $class_names = ' class="' . esc_attr($class_names) . '"';
+
+        $id = apply_filters('nav_menu_item_id', 'menu-item-' . $item->ID, $item, $args);
+        $id = strlen($id) ? ' id="' . esc_attr($id) . '"' : '';
+
+        $output .= $indent . '<li ' . $id . $value . $class_names . $li_attributes . '>';
+
+        $attributes = !empty($item->attr_title) ? ' title="' . esc_attr($item->attr_title) . '"' : '';
+        $attributes .= !empty($item->target) ? ' target="' . esc_attr($item->target) . '"' : '';
+        $attributes .= !empty($item->xfn) ? ' rel="' . esc_attr($item->xfn) . '"' : '';
+        $attributes .= !empty($item->url) ? ' href="' . esc_attr($item->url) . '"' : '';
+
+        $attributes .= ($args->walker->has_children) ? ' class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"' : ' class="nav-link"';
+
+        $item_output = $args->before;
+        $item_output .= '<a' . $attributes . '>';
+        $item_output .= $args->link_before . apply_filters('the_title', $item->title, $item->ID) . $args->link_after;
+        $item_output .= '</a>';
+        $item_output .= $args->after;
+
+        $output .= apply_filters('walker_nav_menu_start_el', $item_output, $item, $depth, $args);
     }
 }
-add_action('wp_head', 'rastgo_add_factcheck_schema');
-
-
-// $document_root = $_SERVER['DOCUMENT_ROOT'] . '/rasadi';
-// if (file_exists($document_root . '/wp-load.php')) {
-//     require_once($document_root . '/wp-load.php');
-// } else {
-//     error_log('wp-load.php not found!');
-//     exit;
-// }
-
-// Check if the request is an Ajax request
-if (defined('DOING_AJAX') && DOING_AJAX) {
-
-    // error_log('me fired/ url: ' . $_POST['guid']);
-
-    // Check if the required data is received
-    if (isset($_POST['guid'])) {
-        $guid = sanitize_text_field($_POST['guid']);
-        // Call the function
-        scrape_and_publish_post($guid);
-    }
-}
-
-// Function to scrape data from a given URL and create a new WordPress post
-// function scrape_and_publish_post($guid)
-// {
-//     $url = $guid;
-//     // $url = "https://www.farsnews.ir/news/14021011000961/%D8%A7%D9%86%D8%AA%D8%B4%D8%A7%D8%B1-%D9%86%D8%AE%D8%B3%D8%AA%DB%8C%D9%86%E2%80%8C%D8%A8%D8%A7%D8%B1%7C-%D8%AE%D8%A7%D8%B7%D8%B1%D9%87-%D8%B1%D9%87%D8%A8%D8%B1-%D8%A7%D9%86%D9%82%D9%84%D8%A7%D8%A8-%D8%A7%D8%B2-%D9%86%D9%82%D9%84-%D9%82%D9%88%D9%84-%D8%AD%D8%A7%D8%AC-%D9%82%D8%A7%D8%B3%D9%85-%D8%AF%D8%B1%D8%A8%D8%A7%D8%B1%D9%87";
-
-//     error_log('url in function: ' . $url);
-
-//     // Load the HTML from the provided URL
-//     $html = file_get_html($url);
-//     // error_log('url-content: ' . $html);
-
-
-
-
-//     // Check if HTML is successfully loaded
-//     if ($html) {
-
-//         // انتخاب المان h1 با کلاس "title" و مشخصه itemprop="headline"
-//         $title_element = $html->find('h1.title', 0);
-
-//         // بررسی وجود المان قبل از استفاده از تابع find()
-//         if ($title_element) {
-//             // دریافت متن موجود در المان
-//             $title = $title_element->plaintext;
-//         } else {
-//             // در صورت عدم وجود المان، مقدار پیشفرض یا اقدام مناسب دیگر
-//             $title = 'عنوان پیدا نشد';
-//         }
-
-//         $excerpt = $html->find('p.lead', 0);
-//         $excerpt = $excerpt->plaintext;
-
-//         $content = $html->find('div#CK_editor', 0);
-//         $content = $content->innertext;
-
-//         $thumbnail_url = $html->find('.contain-img img', 0)->src;
-
-
-//         // Check if all required elements are found
-//         if ($title && $excerpt && $content && $thumbnail_url) {
-
-//             // Prepare data for creating a WordPress post
-//             $post_data = array(
-//                 'post_title' => $title,
-//                 'post_content' => $content,
-//                 'post_excerpt' => $excerpt,
-//                 'post_status' => 'publish',
-//                 'post_type' => 'post',
-//             );
-
-//             // Insert the post into the WordPress database
-//             // درست کردن پست در وردپرس
-//             try {
-//                 error_log('dolly1 ');
-//                 $post_id = wp_insert_post($post_data);
-//                 ob_flush(); // تخلیه خروجی
-//                 error_log('dolly2 ');
-//             } catch (Exception $e) {
-//                 echo '<script>console.log("Failed to insert the post. Error: ' . $e->getMessage() . '");</script>';
-//                 error_log('Failed to insert the post. Error: ' . $e->getMessage());
-//                 ob_flush(); // تخلیه خروجی
-//             }
-
-
-//             // Upload and set the featured image for the post
-//             $image_url = $thumbnail_url;
-//             error_log('image_url: ' . $image_url);
-//             $upload_dir = wp_upload_dir();
-//             error_log('upload_dir: ' . $upload_dir['path']);
-//             $image_data = file_get_contents($image_url);
-//             error_log('image_data: ' . $image_data);
-//             $filename = basename($image_url);
-//             error_log('filename: ' . $filename);
-//             if (wp_mkdir_p($upload_dir['path'])) {
-//                 $file = $upload_dir['path'] . '/' . $filename;
-//             } else {
-//                 $file = $upload_dir['basedir'] . '/' . $filename;
-//             }
-//             error_log('file:' . $file);
-
-//             file_put_contents($file, $image_data);
-//             $wp_filetype = wp_check_filetype($filename, null);
-//             $attachment = array(
-//                 'post_mime_type' => $wp_filetype['type'],
-//                 'post_title' => sanitize_file_name($filename),
-//                 'post_content' => '',
-//                 'post_status' => 'inherit'
-//             );
-//             $attach_id = wp_insert_attachment($attachment, $file, $post_id);
-//             require_once(ABSPATH . 'wp-admin/includes/image.php');
-//             $attach_data = wp_generate_attachment_metadata($attach_id, $file);
-//             wp_update_attachment_metadata($attach_id, $attach_data);
-//             set_post_thumbnail($post_id, $attach_id);
-
-
-
-
-
-
-
-//             // Output success or failure message
-//             if ($post_id) {
-//                 echo '<script>console.log("Post created successfully with ID: " + ' . $post_id . ');</script>';
-//             } else {
-//                 echo '<script>console.log("Failed to create post. ");</script>';
-//                 error_log('Failed to create post.');
-//             }
-//         } else {
-//             echo '<script>console.log("Required elements not found on the page. ");</script>';
-
-//             error_log('Required elements not found on the page.');
-//         }
-//     } else {
-//         echo '<script>console.log("Failed to load HTML from the URL.");</script>';
-//         error_log('Failed to load HTML from the URL.');
-//     }
-// }
-
 
 
 

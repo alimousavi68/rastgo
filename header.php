@@ -10,6 +10,15 @@
     <!-- SEO Meta Tags -->
     <title><?php wp_title(' | ', true, 'right'); ?> <?php bloginfo('name'); ?></title>
 
+    <meta name="description" content="<?php
+                                        if (is_home() || is_front_page()) {
+                                            bloginfo('description');
+                                        } elseif (is_single()) {
+                                            echo strip_tags(get_the_excerpt());
+                                        } else {
+                                            bloginfo('description');
+                                        }
+                                        ?>">
     <meta name="keywords" content="<?php
                                     if (is_single()) {
                                         $tags = get_the_tags();
@@ -24,11 +33,15 @@
                                         echo 'فکت، راست آزمایی اخبار، فکت ایران';
                                     }
                                     ?>">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
+    <?php if (is_singular()) : ?>
+        <link rel="canonical" href="<?php echo get_permalink(); ?>" />
+    <?php endif; ?>
+    <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/assets/css/bootstrap.rtl.min.css">
     <!-- Datepicker -->
     <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/assets/css/persianDatepicker-default.css" />
     <!-- Select2 -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- <link href="<?php echo get_template_directory_uri(); ?>/assets/css/select2.min.css" rel="stylesheet" /> -->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> -->
 
     <!-- Social Media Meta Tags -->
     <!--open graph tags -->
@@ -57,8 +70,6 @@
                                                 ?>">
     <meta name="twitter:image"
         content="<?php echo has_post_thumbnail() ? get_the_post_thumbnail_url() : get_template_directory_uri() . '/images/global/no-image.webp'; ?>">
-
-
 
 
 
@@ -132,7 +143,7 @@
                             </svg>
                         </a>
                     <?php endif; ?>
-                   
+
 
                     <!-- Mobile Menu -->
                     <button class="mobile-nav-action d-md-none d-flex align-items-center justify-content-center"
@@ -160,6 +171,29 @@
         </div>
     </header>
     <!-- End Header -->
+
+    <!-- Offcanvas Mobile Navigation -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMobileNavs" aria-labelledby="offcanvasMobileNavsLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasMobileNavsLabel">منو</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <!-- Mobile navigation content will go here -->
+            <?php
+            wp_nav_menu(array(
+                'theme_location' => 'primary',
+                'container' => false,
+                'menu_class' => 'navbar-nav justify-content-end flex-grow-1 pe-3',
+                'fallback_cb' => '__return_false',
+                'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>',
+                'depth' => 2,
+                'walker' => new Bootstrap_5_Walker_Nav_Menu(),
+            ));
+            ?>
+        </div>
+    </div>
+    <!-- End Offcanvas Mobile Navigation -->
 
 
     <?php if (true): ?>

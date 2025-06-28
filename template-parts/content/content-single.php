@@ -10,7 +10,7 @@ $i8_read_time = get_post_meta($post->ID, 'i8_read_time', true) ?? '۵';
     <div class="row">
         <div class="col-12">
             <!-- news Image -->
-            <?php echo i8_the_thumbnail('', 'w-100 main-img img-fluid mb-4', $size = array('width' => 'auto', 'height' => 'auto'), true, '', false, true); ?>
+            <?php echo i8_the_thumbnail('i8-xl-image', 'w-100 main-img img-fluid mb-4', $size = array('width' => 'auto', 'height' => 'auto'), true, '', false, true); ?>
             <!-- news Title -->
             <h1 class="main-title text-center mb-4">
                 <?php the_title(); ?>
@@ -83,58 +83,63 @@ $i8_read_time = get_post_meta($post->ID, 'i8_read_time', true) ?? '۵';
         </div>
     </div>
     <!-- END Breadcrumb Secion -->
-    <div class="fact-check-card   border mx-auto p-0" >
-        <div class="rating-section   border-top border-bottom py-2 px-4 d-flex align-items-center" style="background-color: #F3F5F8;">
-            <h5 class="context-title text-dark font-weight-bold" >ادعا</h5>
-        </div>
-        <div class="claim-section-custom-border-rtl br p-3  bg-white ">
-            <p class="claim-text-custom-font text-dark mb-0 pe-2" style="border-right: 4px solid #ffc107;">
-                <?php echo get_post_meta($post->ID, 'i8_fact_summary', true) ? get_post_meta($post->ID, 'i8_fact_summary', true) : 'موجود نیست' ?>
+    <?php
+    $result= get_post_meta($post->ID, 'i8_fact_result', true);
+    if ($result) : ?>
+        <div class="fact-check-card   border mx-auto p-0">
+            <div class="rating-section   border-top border-bottom py-2 px-4 d-flex align-items-center" style="background-color: #F3F5F8;">
+                <h5 class="context-title text-dark font-weight-bold">ادعا</h5>
+            </div>
+            <div class="claim-section-custom-border-rtl br p-3  bg-white ">
+                <p class="claim-text-custom-font text-dark mb-0 pe-2" style="border-right: 4px solid #ffc107;">
+                    <?php echo get_post_meta($post->ID, 'i8_fact_summary', true) ? get_post_meta($post->ID, 'i8_fact_summary', true) : 'موجود نیست' ?>
+                </p>
+            </div>
+
+            <div class="rating-section border-top border-bottom py-2 px-4 d-flex align-items-center" style="background-color: #F3F5F8;">
+                <h5 class="context-title text-dark font-weight-bold">نتیجه بررسی</h5>
+            </div>
+            <div class="context-section py-2 px-3 row-gap-2 d-flex bg-white ">
+                <?php
+                $factcheck_result = get_post_meta($post->ID, 'i8_fact_result', true);
+                if ($factcheck_result == 'true') {
+                    $factcheck_result = 'درست';
+                    $factcheck_result_icon = get_template_directory_uri() . '/images/true.svg';
+                    $text_color = 'text-success';
+                } elseif ($factcheck_result == 'false') {
+                    $factcheck_result = 'نادرست';
+                    $factcheck_result_icon = get_template_directory_uri() . '/images/false.svg';
+                    $text_color = 'text-danger';
+                } elseif ($factcheck_result == 'halftrue') {
+                    $factcheck_result = 'نیمه درست';
+                    $factcheck_result_icon = get_template_directory_uri() . '/images/half-true.svg';
+                    $text_color = 'text-warning';
+                } else {
+                    $factcheck_result = 'این پست ادعایی ندارد.';
+                }
+                ?>
+                <div class="icon-container ml-3">
+                    <img src="<?php echo $factcheck_result_icon ?>" alt="" class="rating-icon-custom-size">
+                </div>
+                <div class="text-content flex-grow-1 d-flex flex-column row-gap-1">
+                    <h3 class="rating-text <?php echo $text_color; ?> font-weight-bold mb-0 h2"><?php echo $factcheck_result; ?></h3>
+                    <?php
+                    $ranking_info_url = rastgo_get_ranking_page_url();
+                    ?>
+                    <a href="<?php echo ($ranking_info_url) ?? '#'; ?>" class="rating-link text-primary small d-block mt-1">
+                        درباره این رتبه بندی
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
+                            <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <p class="context-text d-flex gap-2 px-4 py-1 text-secondary bg-white">
+                <?php echo get_post_meta($post->ID, 'i8_fact_result_summary', true) ? get_post_meta($post->ID, 'i8_fact_result_summary', true) : 'این پست ادعایی ندارد.' ?>
             </p>
         </div>
-        <div class="rating-section border-top border-bottom py-2 px-4 d-flex align-items-center" style="background-color: #F3F5F8;">
-            <h5 class="context-title text-dark font-weight-bold" >نتیجه بررسی</h5>
-        </div>
-        <div class="context-section py-2 px-3 row-gap-2 d-flex bg-white ">
-            <?php
-            $factcheck_result = get_post_meta($post->ID, 'i8_fact_result', true);
-            if ($factcheck_result == 'true') {
-                $factcheck_result = 'درست';
-                $factcheck_result_icon = get_template_directory_uri() . '/images/true.svg';
-                $text_color = 'text-success';
-            } elseif ($factcheck_result == 'false') {
-                $factcheck_result = 'نادرست';
-                $factcheck_result_icon = get_template_directory_uri() . '/images/false.svg';
-                $text_color = 'text-danger';
-            } elseif ($factcheck_result == 'halftrue') {
-                $factcheck_result = 'نیمه درست';
-                $factcheck_result_icon = get_template_directory_uri() . '/images/half-true.svg';
-                $text_color = 'text-warning';
-            } else {
-                $factcheck_result = 'این پست ادعایی ندارد.';
-            }
-            ?>
-            <div class="icon-container ml-3">
-                <img src="<?php echo $factcheck_result_icon ?>" alt="" class="rating-icon-custom-size">
-            </div>
-            <div class="text-content flex-grow-1 d-flex flex-column row-gap-1">
-                <h3 class="rating-text <?php echo $text_color; ?> font-weight-bold mb-0 h2"><?php echo $factcheck_result; ?></h3>
-                <?php
-                $ranking_info_url = rastgo_get_ranking_page_url();
-                ?>
-                <a href="<?php echo ($ranking_info_url) ?? '#'; ?>" class="rating-link text-primary small d-block mt-1">
-                    درباره این رتبه بندی
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
-                        <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
-                    </svg>
-                </a>
-            </div>
-        </div>
-        <p class="context-text d-flex gap-2 px-4 py-1 text-secondary bg-white">
-            <?php echo get_post_meta($post->ID, 'i8_fact_result_summary', true) ? get_post_meta($post->ID, 'i8_fact_result_summary', true) : 'این پست ادعایی ندارد.' ?>
-        </p>
-    </div>
+    <?php endif; ?>
     <!-- news body -->
     <div class="row pt-3 align-items-center">
         <?php the_content(); ?>

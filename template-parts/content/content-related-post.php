@@ -44,7 +44,7 @@ if ($related_posts->have_posts()) :
                         <article class="article-item position-relative overflow-hidden">
                             <!-- post thumbnail -->
                             <a href="<?php the_permalink(); ?>" class="article-img-box d-block position-relative overflow-hidden">
-                                <?php echo i8_the_thumbnail('medium', 'article-img w-100 h-100 object-cover', $dimenition = array('width' => '', 'height' => ''), true, '', false, true); ?>
+                                <?php echo i8_the_thumbnail('i8-md-image', 'article-img w-100 h-100 object-cover', $dimenition = array('width' => '', 'height' => ''), true, '', false, true); ?>
                             </a>
 
                             <div class="article-content">

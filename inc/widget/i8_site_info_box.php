@@ -235,7 +235,7 @@ class i8_site_info_box extends WP_Widget
         echo $args['before_widget'];
 
         if ($hide_title != 'on') {
-            echo '<div class="text-title box-title ">';
+            echo '<div class="text-title box-title fw-bold">';
             echo $args['before_title']  . $title  .  $args['after_title'];
             echo $sub_title_print . '</div>';
         }
@@ -254,19 +254,19 @@ class i8_site_info_box extends WP_Widget
             <?php if ($hide_social_box != 'on') : ?>
                 <div class="site-info-social-links">
                     <div class="d-flex justify-content-between gap-2 ">
-                        <a class="p-0 p-lg-0 p-sm-1 social-media-link " href="<?php echo $social_link_1; ?>" alt="social channel" aria-label="channel">
+                        <a class="px-2 p-lg-2 p-sm-2 social-media-link " href="<?php echo $social_link_1; ?>" alt="social channel" aria-label="channel">
                             <?php echo $social_icon_1; ?>
                         </a>
-                        <a class="p-0 p-lg-0 p-sm-1 social-media-link " href="<?php echo $social_link_2; ?>" alt="social channel" aria-label="channel">
+                        <a class="px-2 p-lg-2 p-sm-2 social-media-link " href="<?php echo $social_link_2; ?>" alt="social channel" aria-label="channel">
                             <?php echo $social_icon_2; ?>
                         </a>
-                        <a class="p-0 p-lg-0 p-sm-1 social-media-link " href="<?php echo $social_link_3; ?>" alt="social channel" aria-label="channel">
+                        <a class="px-2 p-lg-2 p-sm-2 social-media-link " href="<?php echo $social_link_3; ?>" alt="social channel" aria-label="channel">
                             <?php echo $social_icon_3; ?>
                         </a>
-                        <a class="p-0 p-lg-0 p-sm-1 social-media-link " href="<?php echo $social_link_4; ?>" alt="social channel" aria-label="channel">
+                        <a class="px-2 p-lg-2 p-sm-2 social-media-link " href="<?php echo $social_link_4; ?>" alt="social channel" aria-label="channel">
                             <?php echo $social_icon_4; ?>
                         </a>
-                        <a class="p-0 p-lg-0 p-sm-1 social-media-link " href="<?php echo $social_link_5; ?>" alt="social channel" aria-label="channel">
+                        <a class="px-2 p-lg-2 p-sm-2 social-media-link " href="<?php echo $social_link_5; ?>" alt="social channel" aria-label="channel">
                             <?php echo $social_icon_5; ?>
                         </a>
 

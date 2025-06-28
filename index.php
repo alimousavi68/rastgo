@@ -3,7 +3,6 @@
 get_header();
 ?>
 
-
 <main class="main">
     <div class="container">
         <div class="row align-items-start position-relative">
@@ -11,8 +10,8 @@ get_header();
             <!-- Aside Section -->
             <div class="d-none d-lg-block col-lg-3 col-xl-2 col-xxl-auto position-sticky top-16">
                 <aside class="sidebar pb-5">
-                     <?php
-                        dynamic_sidebar('-top_section_right');
+                    <?php
+                    dynamic_sidebar('top_section_right');
                     ?>
                 </aside>
             </div>
@@ -22,11 +21,11 @@ get_header();
             <div class="col-lg-9 col-xl-10 col-xxl-9">
                 <div class="main-container row">
                     <?php
-                        dynamic_sidebar('hf-sidebar');
+                    dynamic_sidebar('hf-sidebar');
                     ?>
                 </div>
 
-                
+
             </div>
         </div>
         <!-- END Article List Section -->
@@ -38,18 +37,15 @@ get_header();
     <section class="about-section">
         <div class="container">
             <?php
-                        dynamic_sidebar('hms-sidebar');
-                    ?>
+            dynamic_sidebar('hms-sidebar');
+            ?>
         </div>
     </section>
     <!-- END About Section -->
 
-</main>
-
-
+ </main>
 
 
 <?php
-// //footer
 get_footer();
 ?>

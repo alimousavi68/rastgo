@@ -7,6 +7,8 @@ get_header();
 
 
 
+
+
 <main class="main pb-5">
     <div class="container">
         <div class="row align-items-start position-relative">
@@ -90,7 +92,7 @@ get_header();
                             </select>
 
                             <span class="d-block form-title mb-1">ناشران:</span>
-                            <div class="mb-2 overflow-hidden js-select2-box">
+                            <div class="overflow-hidden js-select2-box">
                                 <?php
                                 $selected_publishers = isset($_GET['publishers']) ? (array) $_GET['publishers'] : array();
                                 ?>
@@ -105,14 +107,14 @@ get_header();
                                 </select>
                             </div>
                             <!-- Result filter dropdown moved outside publishers select -->
-                            <span class="d-block form-title mb-2">نتیجه بررسی:</span>
-                            <div class="mb-2 overflow-hidden js-select2-box">
+                            <span class="d-block form-title">نتیجه بررسی:</span>
+                            <div class="overflow-hidden js-select2-box">
                                 <?php
                                 if (isset($_GET['review_result'])) {
                                     $review_result = $_GET['review_result'];
                                 }
                                 ?>
-                                <select class="form-select cs-select-inp mb-2" name="review_result" aria-label="">
+                                <select class="form-select cs-select-inp" name="review_result" aria-label="">
                                     <option value="">انتخاب نتیجه</option>
                                     <option value="true" <?php if (isset($_GET['review_result'])) {
                                                                 selected($review_result, 'true');
@@ -127,7 +129,7 @@ get_header();
                             </div>
 
                             <span class="d-block form-title mb-2">شبکه های اجتماعی:</span>
-                            <div class="mb-2 overflow-hidden js-select2-box">
+                            <div class="overflow-hidden js-select2-box">
                                 <select class="js-states form-control js-select2-01" name="socials[]" multiple="multiple">
                                     <?php
                                     $selected_socials = isset($_GET['socials']) ? array_map('intval', $_GET['socials']) : array();
@@ -161,7 +163,7 @@ get_header();
                             <div class="col-md-6 col-xl-4">
                                 <article class="article-item position-relative overflow-hidden">
                                     <a href="<?php the_permalink(); ?>" class="article-img-box d-block position-relative overflow-hidden">
-                                        <?php echo i8_the_thumbnail('medium', 'article-img w-100 h-100 object-cover', $size = array('width' => '', 'height' => ''), true, '', false, true) ?>
+                                        <?php echo i8_the_thumbnail('i8-md-image', 'article-img w-100 h-100 object-cover', $size = array('width' => '', 'height' => ''), true, '', false, true) ?>
                                     </a>
                                     <div class="article-content">
                                         <span class="article-tag">

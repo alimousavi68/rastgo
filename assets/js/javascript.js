@@ -2,6 +2,21 @@
 $("#themeSwitch").on("click", function () {
     $(this).toggleClass("switch-active");
     $("html").toggleClass("dark-theme");
+
+    // ذخیره وضعیت در localStorage
+    if ($("html").hasClass("dark-theme")) {
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
+    }
+});
+
+// هنگام بارگذاری صفحه، وضعیت را بازیابی کن
+$(document).ready(function () {
+    if (localStorage.getItem("theme") === "dark") {
+        $("html").addClass("dark-theme");
+        $("#themeSwitch").addClass("switch-active");
+    }
 });
 
 // Breadcrumb Action
