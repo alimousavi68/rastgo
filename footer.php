@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 ?>
-<footer class="footer"> px-3 px-lg-0">
+<footer class="footer px-3 px-lg-0">
   <div class="footer-container mx-auto mb-4">
     <div class="container">
       <div class="row">
@@ -61,7 +61,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 
-<?php rastgo_mobile_offcanvas_menu( 'mobile' ); ?>
+
 
 
 
@@ -75,11 +75,13 @@ if ( ! defined( 'ABSPATH' ) ) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <input type="text" class="form-control" id="" placeholder="محتوا">
-      </div>
-      <div class="modal-footer justify-content-start">
-        <button type="button" class="btn btn-success">جست و جو</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+        <form action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">
+          <input type="text" class="form-control" name="s" placeholder="محتوا">
+        </div>
+        <div class="modal-footer justify-content-start">
+          <button type="submit" class="btn btn-success">جست و جو</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+        </form>
       </div>
     </div>
   </div>
@@ -241,7 +243,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- end link to top  -->
 
 <!-- theme switch -->
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/assets/js/bootstrap.bundle.min.js"></script>
+
+<?php rastgo_mobile_offcanvas_menu( 'mobile' ); ?>
+
 <?php wp_footer(); ?>
 
 <script src="<?php echo get_template_directory_uri(); ?>/assets/js/persianDatepicker.min.js"></script>
@@ -250,6 +254,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   (function($) {
     // Change Theme Button
     jQuery(document).ready(function() {
+
       // بازیابی وضعیت تم از localStorage
       if (localStorage.getItem("theme") === "dark") {
         jQuery("html").addClass("dark-theme");
