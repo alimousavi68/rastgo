@@ -62,7 +62,7 @@ function yourtheme_comment($comment, $args, $depth) {
     $tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
     $is_child = $comment->comment_parent != 0;
     ?>
-    <<?php echo $tag; ?> <?php comment_class('mb-4 ' . ($is_child ? 'ms-5 ps-3 bg-light' : 'ms-0 bg-light-subtle') . ' p-3 border rounded d-flex flex-row'); ?> id="comment-<?php comment_ID(); ?>">
+    <<?php echo $tag; ?> <?php comment_class('mb-4 ' . ($is_child ? 'ms-1 ps-2 bg-light' : 'ms-0 bg-light-subtle') . ' p-3 border rounded d-flex flex-row'); ?> id="comment-<?php comment_ID(); ?>">
         <div class="comment-avatar me-3">
             <?php echo get_avatar( $comment, 48, '', '', ['class' => 'rounded-circle'] ); ?>
         </div>

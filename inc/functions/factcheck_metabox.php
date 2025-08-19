@@ -67,8 +67,11 @@ function rastgo_render_verification_meta_box( $post ) {
         <select name="i8_fact_result" id="i8_fact_result" style="width: 100px;">
             <option value="">— انتخاب کنید —</option>
             <option value="true"      <?php selected( $fact_result, 'true' ); ?>>درست</option>
-            <option value="false"     <?php selected( $fact_result, 'false' ); ?>>غلط</option>
             <option value="halftrue"  <?php selected( $fact_result, 'halftrue' ); ?>>نیمه درست</option>
+            <option value="Misleading"  <?php selected( $fact_result, 'Misleading' ); ?>>گمراه کننده</option>
+            <option value="Unverifiable"  <?php selected( $fact_result, 'Unverifiable' ); ?>>غیر قابل اثبات</option>
+            <option value="False"  <?php selected( $fact_result, 'False' ); ?>>نادرست</option>
+            <option value="Unfounded"  <?php selected( $fact_result, 'Unfounded' ); ?>>بی اساس</option>
         </select>
     </p>
 
@@ -126,7 +129,7 @@ function rastgo_save_verification_meta_box( $post_id ) {
 
     // 3.5. ذخیره نتیجه بررسی
     if ( isset( $_POST['i8_fact_result'] ) ) {
-        $valid = array( 'true', 'false', 'halftrue' );
+        $valid = array( 'true', 'False', 'halftrue', 'Misleading', 'Unverifiable', 'Unfounded' );
         $value = in_array( $_POST['i8_fact_result'], $valid, true ) ? $_POST['i8_fact_result'] : '';
         update_post_meta( $post_id, 'i8_fact_result', $value );
     }

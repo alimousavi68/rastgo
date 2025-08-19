@@ -12,7 +12,7 @@ get_header();
 
 
             <!-- Aside Section -->
-            <div class="d-none d-lg-block col-lg-3 col-xl-2 col-xxl-auto position-sticky top-16">
+            <div class="d-lg-block col-lg-3 col-xl-2 col-xxl-auto position-lg-sticky top-16">
                 <aside class="sidebar pb-5">
                     <div class="sidebar-search-box">
                         <form action="<?php echo esc_url(home_url('/')); ?>" method="get" class="search-form">

@@ -182,7 +182,7 @@
             <!-- Mobile navigation content will go here -->
             <?php
             wp_nav_menu(array(
-                'theme_location' => 'primary',
+                'theme_location' => 'mobile',
                 'container' => false,
                 'menu_class' => 'navbar-nav justify-content-end flex-grow-1 pe-3',
                 'fallback_cb' => '__return_false',

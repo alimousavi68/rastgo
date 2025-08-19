@@ -5,7 +5,7 @@ $tag_icon = '';
 $tag_icon = customizeSVG($tag_icon, 'var(--i8-dark-primary)', 'var(--i8-dark-primary)');
 $i8_read_time = get_post_meta($post->ID, 'i8_read_time', true) ?? '۵';
 ?>
-<div class="container">
+<div class="container overflow-hidden">
     <!-- intro news -->
     <div class="row">
         <div class="col-12">
@@ -18,7 +18,7 @@ $i8_read_time = get_post_meta($post->ID, 'i8_read_time', true) ?? '۵';
             <!-- news Metadata -->
             <div
                 class="sub-box-details d-flex flex-column flex-md-row align-items-center justify-content-center mb-4">
-                <span class="sub-box-item pe-2 border-start border-end-0">
+                <span class="sub-box-item pe-2  border-end-0">
                     <?php
                     echo 'منتشر شده در ';
                     the_date('Y/m/d ')
@@ -35,7 +35,7 @@ $i8_read_time = get_post_meta($post->ID, 'i8_read_time', true) ?? '۵';
         </div>
     </div>
     <!-- Breadcrumb Secion -->
-    <div class="single-page-breadcrumb">
+    <div class="single-page-breadcrumb py-2">
         <div class="container">
             <div class="row">
                 <div class="col-12 d-flex flex-column flex-md-row justify-content-between">
@@ -106,7 +106,7 @@ $i8_read_time = get_post_meta($post->ID, 'i8_read_time', true) ?? '۵';
                     $factcheck_result = 'درست';
                     $factcheck_result_icon = get_template_directory_uri() . '/images/true.svg';
                     $text_color = 'text-success';
-                } elseif ($factcheck_result == 'false') {
+                } elseif ($factcheck_result == 'False') {
                     $factcheck_result = 'نادرست';
                     $factcheck_result_icon = get_template_directory_uri() . '/images/false.svg';
                     $text_color = 'text-danger';
@@ -114,12 +114,24 @@ $i8_read_time = get_post_meta($post->ID, 'i8_read_time', true) ?? '۵';
                     $factcheck_result = 'نیمه درست';
                     $factcheck_result_icon = get_template_directory_uri() . '/images/half-true.svg';
                     $text_color = 'text-warning';
+                } elseif ($factcheck_result == 'Misleading') {
+                    $factcheck_result = 'گمراه کننده';
+                    $factcheck_result_icon = get_template_directory_uri() . '/images/misleading.svg';
+                    $text_color = 'text-warning';
+                } elseif ($factcheck_result == 'Unverifiable') {
+                    $factcheck_result = 'غیر قابل اثبات';
+                    $factcheck_result_icon = get_template_directory_uri() . '/images/unverifiable.svg';
+                    $text_color = 'text-secondary';
+                } elseif ($factcheck_result == 'Unfounded') {
+                    $factcheck_result = 'بی اساس';
+                    $factcheck_result_icon = get_template_directory_uri() . '/images/unfounded.svg';
+                    $text_color = 'text-danger';
                 } else {
                     $factcheck_result = 'این پست ادعایی ندارد.';
                 }
                 ?>
-                <div class="icon-container ml-3">
-                    <img src="<?php echo $factcheck_result_icon ?>" alt="" class="rating-icon-custom-size">
+                <div class="icon-container ml-3 d-flex pt-3 pe-2">
+                    <img src="<?php echo $factcheck_result_icon ?>" width="42" height="42" alt="" class="rating-icon-custom-size">
                 </div>
                 <div class="text-content flex-grow-1 d-flex flex-column row-gap-1">
                     <h3 class="rating-text <?php echo $text_color; ?> font-weight-bold mb-0 h2"><?php echo $factcheck_result; ?></h3>
@@ -141,7 +153,7 @@ $i8_read_time = get_post_meta($post->ID, 'i8_read_time', true) ?? '۵';
         </div>
     <?php endif; ?>
     <!-- news body -->
-    <div class="row pt-3 align-items-center">
+    <div id="news_body" class="row pt-3 align-items-center">
         <?php the_content(); ?>
     </div>
     <!-- end container -->

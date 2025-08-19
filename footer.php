@@ -76,10 +76,10 @@ if ( ! defined( 'ABSPATH' ) ) {
       </div>
       <div class="modal-body">
         <form action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">
-          <input type="text" class="form-control" name="s" placeholder="محتوا">
+          <input type="text" class="form-control" name="s" placeholder="عبارت مورد نظر..">
         </div>
         <div class="modal-footer justify-content-start">
-          <button type="submit" class="btn btn-success">جست و جو</button>
+          <button type="submit" class="btn btn-primary">جست و جو</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
         </form>
       </div>
