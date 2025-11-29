@@ -129,6 +129,11 @@ class Bootstrap_5_Walker_Nav_Menu extends Walker_Nav_Menu {
 }
 
 
-
-
-
+// add meia upload for author role
+function add_upload_cap_to_authors() {
+    $role = get_role('author');
+    if ($role && !$role->has_cap('upload_files')) {
+        $role->add_cap('upload_files');
+    }
+}
+add_action('init', 'add_upload_cap_to_authors');
